@@ -6,10 +6,6 @@ import { getPosts } from '../lib/posts';
 const posts = (await getPosts()).slice(0, SITE.recentCount);
 ---
 <Base>
-  <div class="intro">
-    <p class="subtitle">『{SITE.subtitle}』</p>
-    <p>{SITE.description}</p>
-  </div>
   <ul class="sections">
     {Object.entries(SECTIONS).map(([key, s]) => (
       <li><a href={`/${key}/`}><strong>{s.name}</strong><small>{s.description}</small></a></li>
