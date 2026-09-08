@@ -5,7 +5,7 @@ import Base from '../../layouts/Base.astro';
 import Comments from '../../components/Comments.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { SECTIONS } from '../../site.config';
-import { getPosts, postSlug, postTitle, postUrl, wordCount, excerpt, type Post } from '../../lib/posts';
+import { getPosts, postSlug, postTitle, postUrl, wordCount, excerpt, updatedDate, type Post } from '../../lib/posts';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -25,15 +25,16 @@ const { Content } = await render(post);
 const title = postTitle(post);
 const section = SECTIONS[post.collection];
 const words = wordCount(post.body);
+const updated = updatedDate(post);
 ---
-<Base title={title} description={excerpt(post)} article={{ date: post.data.date, updated: post.data.updated }}>
+<Base title={title} description={excerpt(post)} article={{ date: post.data.date, updated }}>
   <article data-pagefind-body>
     <header>
       <h1>{title}</h1>
       <div class="meta">
         <a href={`/${post.collection}/`} data-pagefind-filter="栏目">{section.name}</a>
-        <FormattedDate date={post.data.date} withYear />
-        {post.data.updated && <span>更新于 <FormattedDate date={post.data.updated} withYear /></span>}
+        <span>发表于 <FormattedDate date={post.data.date} withYear /></span>
+        {updated && <span>修订于 <FormattedDate date={updated} withYear /></span>}
         <span>约 {words} 字</span>
         {post.data.draft && <span>草稿</span>}
       </div>

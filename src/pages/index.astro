@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import PostList from '../components/PostList.astro';
+import PostCard from '../components/PostCard.astro';
 import { SITE, SECTIONS } from '../site.config';
 import { getPosts } from '../lib/posts';
 const posts = (await getPosts()).slice(0, SITE.recentCount);
@@ -16,6 +16,9 @@ const posts = (await getPosts()).slice(0, SITE.recentCount);
     ))}
   </ul>
   <h2>最近</h2>
-  <PostList posts={posts} showSection />
+  <div class="cards">
+    {posts.map((p) => <PostCard post={p} />)}
+    {posts.length === 0 && <p class="intro">这里还什么都没有。</p>}
+  </div>
   <p class="more"><a href="/archive/">全部文章 →</a></p>
 </Base>

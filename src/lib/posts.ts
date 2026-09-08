@@ -56,3 +56,30 @@ export function allTags(posts: Post[]): [string, number][] {
   for (const p of posts) for (const t of p.data.tags) m.set(t, (m.get(t) ?? 0) + 1);
   return [...m.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh'));
 }
+
+import { execFileSync } from 'node:child_process';
+
+const gitDateCache = new Map<string, Date | undefined>();
+
+/** 文件最近一次 git 提交时间；没有提交记录（新文件）时返回 undefined */
+function gitLastCommitDate(filePath: string): Date | undefined {
+  if (gitDateCache.has(filePath)) return gitDateCache.get(filePath);
+  let d: Date | undefined;
+  try {
+    const out = execFileSync('git', ['log', '-1', '--format=%cI', '--', filePath], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    if (out) d = new Date(out);
+  } catch {}
+  gitDateCache.set(filePath, d);
+  return d;
+}
+
+/** 修订时间：frontmatter 的 updated 优先，否则用 git 记录；和发表日同一天则视为没有修订，返回 undefined */
+export function updatedDate(p: Post): Date | undefined {
+  const d = p.data.updated ?? (p.filePath ? gitLastCommitDate(p.filePath) : undefined);
+  if (!d) return undefined;
+  return sameDay(d, p.data.date) || d < p.data.date ? undefined : d;
+}
+
+function sameDay(a: Date, b: Date) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}

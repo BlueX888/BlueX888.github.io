@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import PostList from '../../components/PostList.astro';
+import PostCard from '../../components/PostCard.astro';
 import { SECTIONS, SECTION_KEYS, type SectionKey } from '../../site.config';
 import { getPosts } from '../../lib/posts';
 
@@ -10,11 +10,20 @@ export async function getStaticPaths() {
 const section = Astro.params.section as SectionKey;
 const info = SECTIONS[section];
 const posts = await getPosts(section);
+const years = [...new Set(posts.map((p) => p.data.date.getFullYear()))];
 ---
 <Base title={info.name} description={info.description}>
   <div class="page-title">
     <h1>{info.name}</h1>
     <p>{info.description} · 共 {posts.length} 篇</p>
   </div>
-  <PostList posts={posts} groupByYear />
+  {years.map((y) => (
+    <section>
+      <h2 class="year">{y}</h2>
+      <div class="cards">
+        {posts.filter((p) => p.data.date.getFullYear() === y).map((p) => <PostCard post={p} showSection={false} />)}
+      </div>
+    </section>
+  ))}
+  {posts.length === 0 && <p class="intro">这里还什么都没有。</p>}
 </Base>

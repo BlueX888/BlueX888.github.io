@@ -17,10 +17,10 @@ export const SITE = {
 
 /** 四个栏目。key 同时是 URL 路径和 content/ 下的文件夹名。 */
 export const SECTIONS = {
-  reading: { name: '读书', description: '读书笔记与感悟' },
   diary: { name: '日记', description: '某一天的自己' },
-  learning: { name: '学习', description: '学习记录' },
   weekly: { name: '周记', description: '每周反思' },
+  learning: { name: '学习', description: '学习记录' },
+  reading: { name: '读书', description: '读书笔记与感悟' },
 } as const;
 
 export type SectionKey = keyof typeof SECTIONS;
