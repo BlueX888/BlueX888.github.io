@@ -12,7 +12,7 @@ export default defineConfig({
   integrations: [sitemap()],
   markdown: {
     processor: satteri({
-      features: { wikilinks: true, math: true },
+      features: { wikilinks: true, math: true, gfm: { footnotes: { label: '脚注' } } },
       mdastPlugins: [obsidianLinks, katexBlock],
       hastPlugins: [katexInline],
     }),

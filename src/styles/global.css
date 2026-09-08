@@ -148,3 +148,7 @@ h3 { font-size: 1.1rem; margin: 2rem 0 .6rem; }
 /* math */
 .prose .katex-display { margin: 1.5rem 0; overflow-x: auto; overflow-y: hidden; }
 .prose .katex { font-size: 1.05em; }
+
+/* footnotes heading (satteri 输出的 sr-only 标题，这里让它小而可见) */
+.prose .footnotes h2 { font-size: .9rem; color: var(--muted); margin: 0 0 .4rem; }
+.prose .footnotes ol { padding-left: 1.2rem; }
