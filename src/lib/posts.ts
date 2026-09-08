@@ -42,6 +42,7 @@ export function excerpt(p: Post, n = 120): string {
   if (p.data.description) return p.data.description;
   const text = (p.body ?? '')
     .replace(/```[\s\S]*?```/g, '')
+    .replace(/^#{1,6}\s.*$/gm, '')
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
     .replace(/\[\[([^\]|]+)(\|([^\]]+))?\]\]/g, (_, a, __, b) => b ?? a)
     .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
