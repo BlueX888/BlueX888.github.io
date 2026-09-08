@@ -3,7 +3,10 @@
  */
 export const SITE = {
   title: '朝然',
-  description: '朝然的个人记录：读书、日记、学习与每周反思。',
+  /** 副题，显示在首页站名下方 */
+  subtitle: '朝向自然',
+  /** 一句话，首页开场与站点描述（搜索引擎、RSS、分享卡片都用它） */
+  description: '人生，本就是一场无限的自我探索游戏。',
   author: '朝然',
   /** 线上地址，末尾不要加斜杠。GitHub Pages 的地址是 https://<用户名>.github.io */
   url: 'https://bluex888.github.io',
