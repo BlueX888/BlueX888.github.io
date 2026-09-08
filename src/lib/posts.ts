@@ -52,11 +52,6 @@ export function excerpt(p: Post, n = 120): string {
   return text.length > n ? text.slice(0, n) + '……' : text;
 }
 
-export function allTags(posts: Post[]): [string, number][] {
-  const m = new Map<string, number>();
-  for (const p of posts) for (const t of p.data.tags) m.set(t, (m.get(t) ?? 0) + 1);
-  return [...m.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh'));
-}
 
 import { execFileSync } from 'node:child_process';
 

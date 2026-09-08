@@ -42,11 +42,6 @@ const updated = updatedDate(post);
     <div class="prose">
       <Content />
     </div>
-    {post.data.tags.length > 0 && (
-      <div class="tags" style="margin-top:2.5rem">
-        {post.data.tags.map((t) => <a class="tag" href={`/tags/${encodeURIComponent(t)}/`} data-pagefind-filter="标签">{t}</a>)}
-      </div>
-    )}
   </article>
   {(newer || older) && (
     <nav class="post-nav" aria-label="上下篇">

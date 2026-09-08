@@ -17,9 +17,4 @@ const summary = excerpt(post, 110);
     {post.data.draft && <span>草稿</span>}
   </div>
   {summary && <p class="card-excerpt">{summary}</p>}
-  {post.data.tags.length > 0 && (
-    <div class="tags card-tags">
-      {post.data.tags.map((t) => <a class="tag" href={`/tags/${encodeURIComponent(t)}/`}>{t}</a>)}
-    </div>
-  )}
 </article>

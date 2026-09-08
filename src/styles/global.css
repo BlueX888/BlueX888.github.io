@@ -113,10 +113,6 @@ h3 { font-size: 1.1rem; margin: 2rem 0 .6rem; }
   :root:not([data-theme='light']) .prose .astro-code, :root:not([data-theme='light']) .prose .astro-code span { color: var(--shiki-dark) !important; }
 }
 
-.tags { display: flex; gap: .5rem; flex-wrap: wrap; }
-.tag { text-decoration: none; color: var(--muted); font-size: .85rem; }
-.tag::before { content: '#'; opacity: .6; }
-.tag:hover { color: var(--accent); }
 
 .post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); font-size: .9rem; }
 .post-nav a { text-decoration: none; max-width: 48%; }
@@ -165,7 +161,6 @@ h3 { font-size: 1.1rem; margin: 2rem 0 .6rem; }
 .card-meta a { text-decoration: none; }
 .card-meta a:hover { color: var(--accent); }
 .card-excerpt { margin: .8rem 0 0; color: var(--fg); opacity: .85; font-size: .95rem; line-height: 1.8; }
-.card-tags { margin-top: .8rem; }
 .year + .cards, section + section { margin-top: 0; }
 section .year { margin-top: 2.2rem; }
 section:first-of-type .year { margin-top: 0; }

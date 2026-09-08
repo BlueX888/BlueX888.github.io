@@ -35,7 +35,6 @@ content:
     fields:
       - { name: title, label: 标题, type: string, required: true }
       - { name: date, label: 日期, type: date, options: { format: "yyyy-MM-dd" } }
-      - { name: tags, label: 标签, type: string, list: true }
       - { name: description, label: 一句话摘要, type: text, description: 用于列表、RSS 和搜索引擎，可不填 }
       - { name: draft, label: 草稿, type: boolean, default: true, description: 勾选时线上不显示 }
       - { name: slug, label: 网址后缀, type: string, description: "可不填。填英文，如 sapiens，网址就是 /reading/sapiens/", pattern: "^[a-z0-9-]*$" }
@@ -57,7 +56,6 @@ content:
     fields:
       - { name: title, label: 标题, type: string, required: true }
       - { name: date, label: 日期, type: date, options: { format: "yyyy-MM-dd" } }
-      - { name: tags, label: 标签, type: string, list: true }
       - { name: description, label: 一句话摘要, type: text }
       - { name: draft, label: 草稿, type: boolean, default: true }
       - { name: slug, label: 网址后缀, type: string, pattern: "^[a-z0-9-]*$" }
@@ -79,7 +77,6 @@ content:
     fields:
       - { name: date, label: 日期, type: date, options: { format: "yyyy-MM-dd" } }
       - { name: title, label: 标题, type: string, description: 可不填，网页上会显示成「2026年9月8日」 }
-      - { name: tags, label: 标签, type: string, list: true }
       - { name: draft, label: 草稿, type: boolean, default: false }
       - { name: body, label: 正文, type: rich-text, options: { format: markdown, media: true } }
 
@@ -99,7 +96,6 @@ content:
     fields:
       - { name: title, label: 标题, type: string, required: true, description: 例如「2026 年第 37 周」 }
       - { name: date, label: 日期, type: date, options: { format: "yyyy-MM-dd" } }
-      - { name: tags, label: 标签, type: string, list: true }
       - { name: draft, label: 草稿, type: boolean, default: false }
       - { name: body, label: 正文, type: rich-text, options: { format: markdown, media: true } }
 

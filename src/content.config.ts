@@ -9,7 +9,6 @@ const postSchema = z.object({
   date: z.coerce.date(),
   updated: z.coerce.date().optional(),
   description: z.string().optional(),
-  tags: z.array(z.string()).default([]),
   /** 自定义网址中的最后一段，不填则用文件名。 */
   slug: z.string().optional(),
   /** true 时本地能预览，线上不发布 */
