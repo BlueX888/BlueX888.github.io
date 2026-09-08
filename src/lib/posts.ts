@@ -38,7 +38,7 @@ export function wordCount(body = ''): number {
 }
 
 /** 摘要：description 优先，否则取正文前 N 个字 */
-export function excerpt(p: Post, n = 120): string {
+export function excerpt(p: Post, n = 50): string {
   if (p.data.description) return p.data.description;
   const text = (p.body ?? '')
     .replace(/```[\s\S]*?```/g, '')

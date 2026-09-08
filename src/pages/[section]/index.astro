@@ -19,9 +19,9 @@ const years = [...new Set(posts.map((p) => p.data.date.getFullYear()))];
   </div>
   {years.map((y) => (
     <section>
-      <h2 class="year">{y}</h2>
+      {years.length > 1 && <h2 class="year">{y}</h2>}
       <div class="cards">
-        {posts.filter((p) => p.data.date.getFullYear() === y).map((p) => <PostCard post={p} showSection={false} />)}
+        {posts.filter((p) => p.data.date.getFullYear() === y).map((p) => <PostCard post={p} />)}
       </div>
     </section>
   ))}

@@ -14,7 +14,7 @@ export async function GET(context: APIContext) {
       title: postTitle(p),
       link: postUrl(p),
       pubDate: p.data.date,
-      description: excerpt(p, 200),
+      description: excerpt(p, 120),
       categories: [SECTIONS[p.collection].name],
     })),
     customData: `<language>${SITE.lang}</language>`,
