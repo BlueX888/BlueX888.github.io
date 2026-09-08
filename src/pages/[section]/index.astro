@@ -1,0 +1,20 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+import { SECTIONS, SECTION_KEYS, type SectionKey } from '../../site.config';
+import { getPosts } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  return SECTION_KEYS.map((section) => ({ params: { section } }));
+}
+const section = Astro.params.section as SectionKey;
+const info = SECTIONS[section];
+const posts = await getPosts(section);
+---
+<Base title={info.name} description={info.description}>
+  <div class="page-title">
+    <h1>{info.name}</h1>
+    <p>{info.description} · 共 {posts.length} 篇</p>
+  </div>
+  <PostList posts={posts} groupByYear />
+</Base>

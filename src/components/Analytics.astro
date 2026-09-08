@@ -1,0 +1,10 @@
+---
+import { ANALYTICS } from '../site.config';
+const { umami, cloudflareToken } = ANALYTICS;
+---
+{umami.src && umami.websiteId && (
+  <script is:inline defer src={umami.src} data-website-id={umami.websiteId}></script>
+)}
+{cloudflareToken && (
+  <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: cloudflareToken })}></script>
+)}

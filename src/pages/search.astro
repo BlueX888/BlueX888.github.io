@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="搜索">
+  <div class="page-title"><h1>搜索</h1></div>
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <div id="search"></div>
+  <p id="search-hint" class="intro" hidden>搜索索引在 <code>pnpm build</code> 之后才会生成，开发模式下这里不可用。</p>
+  <script is:inline src="/pagefind/pagefind-ui.js" onerror="document.getElementById('search-hint').hidden=false"></script>
+  <script is:inline>
+    window.addEventListener('DOMContentLoaded', function () {
+      if (!window.PagefindUI) return;
+      new PagefindUI({
+        element: '#search',
+        showSubResults: true,
+        showImages: false,
+        autofocus: true,
+        translations: {
+          placeholder: '搜索文章…',
+          zero_results: '没有找到「[SEARCH_TERM]」',
+          many_results: '找到 [COUNT] 条关于「[SEARCH_TERM]」的结果',
+          one_result: '找到 1 条关于「[SEARCH_TERM]」的结果',
+          clear_search: '清除',
+          load_more: '更多结果',
+          search_label: '搜索本站',
+          filters_label: '筛选',
+          searching: '正在搜索「[SEARCH_TERM]」…',
+        },
+      });
+    });
+  </script>
+</Base>

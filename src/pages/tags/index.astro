@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getPosts, allTags } from '../../lib/posts';
+const tags = allTags(await getPosts());
+---
+<Base title="标签">
+  <div class="page-title"><h1>标签</h1></div>
+  <div class="tags">
+    {tags.map(([t, n]) => <a class="tag" href={`/tags/${encodeURIComponent(t)}/`}>{t} <small>{n}</small></a>)}
+  </div>
+</Base>

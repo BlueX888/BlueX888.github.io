@@ -1,0 +1,39 @@
+---
+import { GISCUS } from '../site.config';
+const enabled = GISCUS.repo && GISCUS.repoId && GISCUS.categoryId;
+---
+{enabled && (
+  <section class="comments" id="comments">
+    <script
+      is:inline
+      src="https://giscus.app/client.js"
+      data-repo={GISCUS.repo}
+      data-repo-id={GISCUS.repoId}
+      data-category={GISCUS.category}
+      data-category-id={GISCUS.categoryId}
+      data-mapping={GISCUS.mapping}
+      data-strict="1"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="preferred_color_scheme"
+      data-lang={GISCUS.lang}
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async
+    ></script>
+    <script is:inline>
+      // 跟随站内主题切换
+      (function () {
+        function send(theme) {
+          var f = document.querySelector('iframe.giscus-frame');
+          f && f.contentWindow.postMessage({ giscus: { setConfig: { theme: theme } } }, 'https://giscus.app');
+        }
+        new MutationObserver(function () {
+          var t = document.documentElement.dataset.theme;
+          send(t === 'dark' ? 'dark' : t === 'light' ? 'light' : 'preferred_color_scheme');
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+      })();
+    </script>
+  </section>
+)}

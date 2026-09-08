@@ -1,0 +1,36 @@
+---
+import FormattedDate from './FormattedDate.astro';
+import { SECTIONS } from '../site.config';
+import type { Post } from '../lib/posts';
+import { postTitle, postUrl } from '../lib/posts';
+
+interface Props { posts: Post[]; showSection?: boolean; groupByYear?: boolean; withYear?: boolean }
+const { posts, showSection = false, groupByYear = false, withYear = true } = Astro.props;
+
+const groups: [string, Post[]][] = groupByYear
+  ? Object.entries(
+      posts.reduce<Record<string, Post[]>>((acc, p) => {
+        const y = String(p.data.date.getFullYear());
+        (acc[y] ??= []).push(p);
+        return acc;
+      }, {}),
+    ).sort((a, b) => Number(b[0]) - Number(a[0]))
+  : [['', posts]];
+---
+{groups.map(([year, list]) => (
+  <>
+    {year && <h2 class="year">{year}</h2>}
+    <ul class="post-list">
+      {list.map((p) => (
+        <li>
+          <FormattedDate date={p.data.date} withYear={withYear && !groupByYear} />
+          <span>
+            <a href={postUrl(p)}>{postTitle(p)}</a>
+            {showSection && <span class="section-tag">{SECTIONS[p.collection].name}</span>}
+          </span>
+        </li>
+      ))}
+    </ul>
+  </>
+))}
+{posts.length === 0 && <p class="intro">这里还什么都没有。</p>}
