@@ -28,10 +28,10 @@ export const SECTION_KEYS = Object.keys(SECTIONS) as SectionKey[];
  * 四个值都在 https://giscus.app 页面上按提示生成后填进来；repo 留空则不显示评论区。
  */
 export const GISCUS = {
-  repo: '',
-  repoId: '',
+  repo: 'BlueX888/BlueX888.github.io',
+  repoId: 'R_kgDOUR0wEQ',
   category: 'Announcements',
-  categoryId: '',
+  categoryId: 'DIC_kwDOUR0wEc4DFHGm',
   mapping: 'pathname',
   lang: 'zh-CN',
 };
