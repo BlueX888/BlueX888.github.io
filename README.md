@@ -2,9 +2,21 @@
 
 个人记录站点：读书、日记、学习、周记。用 [Astro](https://astro.build) 生成静态页面，内容用 Markdown 写在 `content/` 里，推送到 GitHub 后自动部署到 GitHub Pages。
 
-## 日常写作
+## 在网页上写（推荐）
 
-`content/` 文件夹就是一个 Obsidian 库：在 Obsidian 里「打开文件夹作为仓库」选中 `content/` 即可。配置已写好：链接用标准 Markdown 相对路径，图片自动存到 `content/attachments/`。
+站点接入了 [Pages CMS](https://pagescms.org)，一个开源的网页编辑器，直接读写 GitHub 仓库里的 Markdown，不需要额外服务器。
+
+1. 打开 https://app.pagescms.org ，用 GitHub 账号登录（沿用 GitHub 的两步验证）
+2. 首次使用会要求安装 Pages CMS 的 GitHub App，选择 **Only select repositories**，只勾 `BlueX888.github.io`
+3. 进入仓库后左侧就是「读书 / 学习 / 日记 / 周记 / 关于页」，点 **Add entry** 新建，写完点 **Save**
+
+保存即提交到仓库，一两分钟后自动上线。编辑器有工具栏（标题、粗体、引用、代码、链接、表格），支持拖拽或粘贴图片（自动存到 `content/attachments/`），勾选「草稿」可以先存着不发布。
+
+安全说明：Pages CMS 只能访问你勾选的这一个仓库；写入的每一次提交都在 GitHub 提交记录里可查、可回滚。要撤销授权，到 GitHub → Settings → Applications → Installed GitHub Apps 卸载即可。配置在仓库根目录的 `.pages.yml`。
+
+## 用 Obsidian 写（可选）
+
+`content/` 文件夹也是一个 Obsidian 库：在 Obsidian 里「打开文件夹作为仓库」选中 `content/` 即可。配置已写好：链接用标准 Markdown 相对路径，图片自动存到 `content/attachments/`。
 
 ```
 content/
@@ -51,7 +63,7 @@ git add -A && git commit -m "新文章" && git push
 ### 支持的写法
 
 - 双链 `[[别的笔记]]`、`[[reading/某本书|显示文字]]`，以及 Obsidian 生成的相对链接 `[x](../reading/某本书.md)`，都会变成站内网址
-- 图片 `![[图.png]]` 或 `![](../attachments/图.png)`，构建时自动压缩优化
+- 图片 `![[图.png]]`、`![](../attachments/图.png)` 或网页编辑器写入的 `/attachments/图.png`，构建时都会自动压缩优化
 - 代码块自动高亮，深浅色跟随主题
 - 公式：行内 `$E=mc^2$`，块级 `$$ ... $$`
 - 脚注、表格、任务列表、删除线

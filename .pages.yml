@@ -1,0 +1,112 @@
+# Pages CMS 配置：https://app.pagescms.org 登录后即可在网页上写文章
+# 文档：https://pagescms.org/docs/configuration/
+
+media:
+  input: content/attachments
+  output: /attachments
+  categories: [image]
+  rename: safe
+
+settings:
+  content:
+    merge: true          # 保留编辑器里没有的 frontmatter 字段
+  commit:
+    identity: user
+    templates:
+      create: "新文章：{filename}"
+      update: "更新：{filename}"
+      delete: "删除：{filename}"
+      rename: "重命名：{oldFilename} -> {newFilename}"
+
+content:
+  - name: reading
+    label: 读书
+    type: collection
+    path: content/reading
+    filename:
+      template: "{year}-{month}-{day}-{hour}{minute}.md"
+      field: create
+    view:
+      fields: [title, date, draft]
+      primary: title
+      sort: [date, title]
+      search: [title, body]
+      default: { sort: date, order: desc }
+    fields:
+      - { name: title, label: 标题, type: string, required: true }
+      - { name: date, label: 日期, type: date, options: { format: "yyyy-MM-dd" } }
+      - { name: tags, label: 标签, type: string, list: true }
+      - { name: description, label: 一句话摘要, type: text, description: 用于列表、RSS 和搜索引擎，可不填 }
+      - { name: draft, label: 草稿, type: boolean, default: true, description: 勾选时线上不显示 }
+      - { name: slug, label: 网址后缀, type: string, description: "可不填。填英文，如 sapiens，网址就是 /reading/sapiens/", pattern: "^[a-z0-9-]*$" }
+      - { name: body, label: 正文, type: rich-text, options: { format: markdown, media: true } }
+
+  - name: learning
+    label: 学习
+    type: collection
+    path: content/learning
+    filename:
+      template: "{year}-{month}-{day}-{hour}{minute}.md"
+      field: create
+    view:
+      fields: [title, date, draft]
+      primary: title
+      sort: [date, title]
+      search: [title, body]
+      default: { sort: date, order: desc }
+    fields:
+      - { name: title, label: 标题, type: string, required: true }
+      - { name: date, label: 日期, type: date, options: { format: "yyyy-MM-dd" } }
+      - { name: tags, label: 标签, type: string, list: true }
+      - { name: description, label: 一句话摘要, type: text }
+      - { name: draft, label: 草稿, type: boolean, default: true }
+      - { name: slug, label: 网址后缀, type: string, pattern: "^[a-z0-9-]*$" }
+      - { name: body, label: 正文, type: rich-text, options: { format: markdown, media: true } }
+
+  - name: diary
+    label: 日记
+    type: collection
+    path: content/diary
+    filename:
+      template: "{year}-{month}-{day}.md"
+      field: create
+    view:
+      fields: [date, title, draft]
+      primary: date
+      sort: [date]
+      search: [title, body]
+      default: { sort: date, order: desc }
+    fields:
+      - { name: date, label: 日期, type: date, options: { format: "yyyy-MM-dd" } }
+      - { name: title, label: 标题, type: string, description: 可不填，网页上会显示成「2026年9月8日」 }
+      - { name: tags, label: 标签, type: string, list: true }
+      - { name: draft, label: 草稿, type: boolean, default: false }
+      - { name: body, label: 正文, type: rich-text, options: { format: markdown, media: true } }
+
+  - name: weekly
+    label: 周记
+    type: collection
+    path: content/weekly
+    filename:
+      template: "{year}-{month}-{day}.md"
+      field: create
+    view:
+      fields: [title, date, draft]
+      primary: title
+      sort: [date]
+      search: [title, body]
+      default: { sort: date, order: desc }
+    fields:
+      - { name: title, label: 标题, type: string, required: true, description: 例如「2026 年第 37 周」 }
+      - { name: date, label: 日期, type: date, options: { format: "yyyy-MM-dd" } }
+      - { name: tags, label: 标签, type: string, list: true }
+      - { name: draft, label: 草稿, type: boolean, default: false }
+      - { name: body, label: 正文, type: rich-text, options: { format: markdown, media: true } }
+
+  - name: about
+    label: 关于页
+    type: file
+    path: content/pages/about.md
+    fields:
+      - { name: title, label: 标题, type: string }
+      - { name: body, label: 正文, type: rich-text, options: { format: markdown, media: true } }

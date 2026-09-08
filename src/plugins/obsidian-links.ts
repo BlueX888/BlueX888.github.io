@@ -2,7 +2,8 @@
  * 把 Obsidian 产生的两类链接改写成站内网址：
  *   1. 相对 Markdown 链接：[标题](../reading/某本书.md)  ->  /reading/某本书/
  *   2. 双链：[[某本书]] 或 [[reading/某本书|别名]]      ->  /reading/某本书/
- * 同时把 [[图片.png]] 这种双链图片改成相对路径，交给 Astro 的图片管线处理。
+ * 同时把 [[图片.png]] 这种双链图片、以及网页编辑器写入的 /attachments/图片.png 绝对路径，
+ * 都改成相对路径，交给 Astro 的图片管线做压缩优化。
  */
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve, sep } from 'node:path';
@@ -83,11 +84,13 @@ export const obsidianLinks = {
     }
   },
   image(node: any, ctx: any) {
-    // ![[图.png]] 会变成 src="图.png"。若同级找不到，就到 attachments/ 里找，并改成相对路径。
+    // 三种来源：Obsidian 的 ![[图.png]]（src="图.png"）、相对路径、网页编辑器的 /attachments/图.png
     const url: string = node.url ?? '';
-    if (!url || isExternal(url) || !ctx.fileURL || !IMAGE_RE.test(url)) return;
+    if (!url || !ctx.fileURL || !IMAGE_RE.test(url)) return;
+    const isCmsPath = url.startsWith('/attachments/');
+    if (!isCmsPath && isExternal(url)) return;
     const fromDir = dirname(fileURLToPath(ctx.fileURL));
-    if (existsSync(resolve(fromDir, decodeURIComponent(url)))) return;
+    if (!isCmsPath && existsSync(resolve(fromDir, decodeURIComponent(url)))) return;
     const inAttachments = join(CONTENT_ROOT, 'attachments', decodeURIComponent(url).split('/').pop()!);
     if (existsSync(inAttachments)) {
       const rel = relative(fromDir, inAttachments).split(sep).join('/');
