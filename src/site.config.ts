@@ -29,6 +29,7 @@ export const SECTION_KEYS = Object.keys(SECTIONS) as SectionKey[];
 /**
  * Waline 评论：不用登录，游客可以匿名留言。
  * 按 README「评论」一节把评论服务部署到 Vercel 后，把它的地址填到 serverURL；留空则不显示评论区。
+ * serverURL 同时启用文章页的「阅读量」计数（文章 meta 行，与评论区共用同一后端与数据库）。
  */
 export const WALINE = {
   /** 评论服务地址，例如 'https://xxx.vercel.app'，末尾不要加斜杠 */

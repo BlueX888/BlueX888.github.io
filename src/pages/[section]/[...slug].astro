@@ -3,6 +3,7 @@ import { render } from 'astro:content';
 import 'katex/dist/katex.min.css';
 import Base from '../../layouts/Base.astro';
 import Comments from '../../components/Comments.astro';
+import Pageview from '../../components/Pageview.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { SECTIONS } from '../../site.config';
 import { getPosts, postSlug, postTitle, postUrl, wordCount, excerpt, updatedDate, type Post } from '../../lib/posts';
@@ -36,6 +37,7 @@ const updated = updatedDate(post);
         <span>发表于 <FormattedDate date={post.data.date} withYear /></span>
         {updated && <span>修订于 <FormattedDate date={updated} withYear /></span>}
         <span>约 {words} 字</span>
+        <Pageview />
         {post.data.draft && <span>草稿</span>}
       </div>
     </header>
@@ -45,8 +47,8 @@ const updated = updatedDate(post);
   </article>
   {(newer || older) && (
     <nav class="post-nav" aria-label="上下篇">
-      {older ? <a href={postUrl(older)}><span>上一篇</span>{postTitle(older)}</a> : <span />}
-      {newer ? <a href={postUrl(newer)} style="text-align:right"><span>下一篇</span>{postTitle(newer)}</a> : <span />}
+      {older ? <a href={postUrl(older)}><span>较早文章</span>{postTitle(older)}</a> : <span />}
+      {newer ? <a href={postUrl(newer)} style="text-align:right"><span>较新文章</span>{postTitle(newer)}</a> : <span />}
     </nav>
   )}
   <Comments />

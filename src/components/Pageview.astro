@@ -1,0 +1,11 @@
+---
+import { WALINE } from '../site.config';
+const enabled = Boolean(WALINE.serverURL);
+const path = Astro.url.pathname;
+---
+{enabled && (
+  <span aria-label="阅读量">
+    <span class="waline-pageview-count" data-path={path}>…</span>
+    次阅读
+  </span>
+)}

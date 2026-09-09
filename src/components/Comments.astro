@@ -30,7 +30,8 @@ const enabled = Boolean(WALINE.serverURL);
       // 配色跟随站点 CSS 变量（见 global.css 的 .comments），不用 Waline 自己的深色模式
       dark: false,
       // 关掉用不到的功能，保持轻量
-      pageview: false,
+      // 页面浏览量统计：打开后计数写入文章 meta 行 .waline-pageview-count 元素（见 Pageview.astro）
+      pageview: true,
       comment: false,
       reaction: false,
       emoji: false,

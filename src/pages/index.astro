@@ -1,16 +1,16 @@
 ---
 import Base from '../layouts/Base.astro';
 import PostCard from '../components/PostCard.astro';
-import { SITE, SECTIONS } from '../site.config';
+import { SITE } from '../site.config';
 import { getPosts } from '../lib/posts';
 const posts = (await getPosts()).slice(0, SITE.recentCount);
 ---
 <Base>
-  <ul class="sections">
-    {Object.entries(SECTIONS).map(([key, s]) => (
-      <li><a href={`/${key}/`}><strong>{s.name}</strong><small>{s.description}</small></a></li>
-    ))}
-  </ul>
+  <section class="home-intro" aria-labelledby="home-title">
+    <p class="eyebrow">个人记录</p>
+    <h1 id="home-title">{SITE.title}</h1>
+    <p>{SITE.description}</p>
+  </section>
   <h2>最近</h2>
   <div class="cards">
     {posts.map((p) => <PostCard post={p} />)}

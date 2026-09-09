@@ -23,7 +23,7 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
     </div>
     <nav class="nav" aria-label="主导航">
       {items.map((i) => <a href={i.href} aria-current={isCurrent(i.href) ? 'page' : undefined}>{i.label}</a>)}
-      <button id="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色">◐</button>
+      <button id="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色"><span aria-hidden="true">◐</span></button>
     </nav>
   </div>
 </header>
@@ -36,5 +36,13 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
     const next = current === 'dark' ? 'light' : 'dark';
     root.dataset.theme = next;
     localStorage.setItem('theme', next);
+    btn?.setAttribute('aria-label', next === 'dark' ? '切换到浅色' : '切换到深色');
+    btn?.setAttribute('title', next === 'dark' ? '切换到浅色' : '切换到深色');
   });
+  if (btn) {
+    const dark = document.documentElement.dataset.theme === 'dark' ||
+      (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+    btn.setAttribute('aria-label', dark ? '切换到浅色' : '切换到深色');
+    btn.setAttribute('title', dark ? '切换到浅色' : '切换到深色');
+  }
 </script>
