@@ -83,8 +83,27 @@ pnpm check      # 类型检查
 
 - `SITE`：站名、简介、线上地址
 - `SECTIONS`：栏目名称与说明（要新增栏目，还需在 `src/content.config.ts` 加一行并建对应文件夹）
-- `GISCUS`：评论。到 https://giscus.app 按提示选择本仓库，把生成的 `repo` / `repoId` / `category` / `categoryId` 填进来。前提：仓库已开启 Discussions，并安装了 giscus GitHub App
+- `WALINE`：评论。游客不用登录就能匿名留言，服务端免费部署在 Vercel 上，步骤见下面「评论」一节
 - `ANALYTICS`：访问统计，Umami 或 Cloudflare Web Analytics 任选，都留空则不加载统计脚本
+
+## 评论
+
+评论用 [Waline](https://waline.js.org/)，留言不需要登录，昵称、邮箱都可以不填。它需要一个自己的后端，免费部署到 Vercel 即可（一次性，约 10 分钟）：
+
+1. 打开 https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fwalinejs%2Fwaline%2Ftree%2Fmain%2Fexample ，用 GitHub 登录，项目名随意（例如 `chaoran-comments`），点 **Create**。
+2. 部署完成后进入项目，顶部 **Storage → Create Database**，选 **Neon**（Postgres），一路默认 **Continue** 建好。
+3. 点进这个数据库 → **Open in Neon** → 左侧 **SQL Editor**，把 https://github.com/walinejs/waline/blob/main/assets/waline.pgsql 的内容粘进去，点 **Run** 建表。
+4. 回到 Vercel 项目 → **Deployments** → 最新一条右侧 **⋯ → Redeploy**，让数据库配置生效。
+5. 状态变成 Ready 后点 **Visit**，得到的网址（形如 `https://chaoran-comments.vercel.app`）就是评论服务地址，填到 `src/site.config.ts` 的 `WALINE.serverURL`，推送后评论区就出现了。
+6. 打开 `<评论服务地址>/ui/register` 注册，**第一个注册的账号自动成为管理员**，之后在 `<评论服务地址>/ui` 里删评论、标记垃圾。
+
+可选设置（Vercel 项目 → Settings → Environment Variables，改完要 Redeploy）：
+
+- `COMMENT_AUDIT=true`：所有留言先审核再显示
+- `SMTP_SERVICE` / `SMTP_USER` / `SMTP_PASS`：配好后有新留言会发邮件通知你（例如 `SMTP_SERVICE=QQ`，密码用邮箱的 SMTP 授权码）
+- `SECURE_DOMAINS=bluex888.github.io`：只允许本站调用评论服务
+
+注意：`vercel.app` 域名在国内部分网络下打不开，若国内访客看不到评论区，在 Vercel 的 Settings → Domains 绑一个自己的域名即可。
 
 ## 部署
 

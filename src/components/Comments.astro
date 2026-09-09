@@ -1,39 +1,43 @@
 ---
-import { GISCUS } from '../site.config';
-const enabled = GISCUS.repo && GISCUS.repoId && GISCUS.categoryId;
+import '@waline/client/waline.css';
+import { WALINE } from '../site.config';
+const enabled = Boolean(WALINE.serverURL);
 ---
 {enabled && (
   <section class="comments" id="comments">
-    <script
-      is:inline
-      src="https://giscus.app/client.js"
-      data-repo={GISCUS.repo}
-      data-repo-id={GISCUS.repoId}
-      data-category={GISCUS.category}
-      data-category-id={GISCUS.categoryId}
-      data-mapping={GISCUS.mapping}
-      data-strict="1"
-      data-reactions-enabled="1"
-      data-emit-metadata="0"
-      data-input-position="top"
-      data-theme="preferred_color_scheme"
-      data-lang={GISCUS.lang}
-      data-loading="lazy"
-      crossorigin="anonymous"
-      async
-    ></script>
-    <script is:inline>
-      // 跟随站内主题切换
-      (function () {
-        function send(theme) {
-          var f = document.querySelector('iframe.giscus-frame');
-          f && f.contentWindow.postMessage({ giscus: { setConfig: { theme: theme } } }, 'https://giscus.app');
-        }
-        new MutationObserver(function () {
-          var t = document.documentElement.dataset.theme;
-          send(t === 'dark' ? 'dark' : t === 'light' ? 'light' : 'preferred_color_scheme');
-        }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-      })();
-    </script>
+    <div
+      id="waline"
+      data-server={WALINE.serverURL}
+      data-path={Astro.url.pathname}
+      data-meta={WALINE.meta.join(',')}
+    ></div>
   </section>
 )}
+<script>
+  import { init } from '@waline/client';
+
+  const el = document.getElementById('waline');
+  if (el) {
+    init({
+      el,
+      serverURL: el.dataset.server!,
+      path: el.dataset.path,
+      lang: 'zh-CN',
+      // 不用登录也能留言；昵称、邮箱都可留空，留空显示为「匿名」
+      login: 'enable',
+      meta: el.dataset.meta!.split(',') as ('nick' | 'mail' | 'link')[],
+      requiredMeta: [],
+      // 配色跟随站点 CSS 变量（见 global.css 的 .comments），不用 Waline 自己的深色模式
+      dark: false,
+      // 关掉用不到的功能，保持轻量
+      pageview: false,
+      comment: false,
+      reaction: false,
+      emoji: false,
+      search: false,
+      imageUploader: false,
+      wordLimit: 2000,
+      noCopyright: true,
+    });
+  }
+</script>

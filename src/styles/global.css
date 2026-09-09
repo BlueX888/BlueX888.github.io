@@ -123,6 +123,29 @@ h3 { font-size: 1.1rem; margin: 2rem 0 .6rem; }
 .post-nav span { display: block; color: var(--muted); font-size: .78rem; }
 
 .comments { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+/* Waline 评论框沿用站点配色，深浅色自动跟随 */
+.comments {
+  --waline-font-size: 0.95rem;
+  --waline-theme-color: var(--accent);
+  --waline-active-color: var(--accent);
+  --waline-color: var(--fg);
+  --waline-dark-grey: var(--muted);
+  --waline-light-grey: var(--muted);
+  --waline-info-color: var(--muted);
+  --waline-bg-color: var(--bg);
+  --waline-bg-color-light: var(--code-bg);
+  --waline-bg-color-hover: var(--code-bg);
+  --waline-info-bg-color: var(--code-bg);
+  --waline-disable-bg-color: var(--code-bg);
+  --waline-disable-color: var(--muted);
+  --waline-border-color: var(--line);
+  --waline-border: 1px solid var(--line);
+  --waline-bq-color: var(--line);
+  --waline-badge-color: var(--accent);
+  --waline-avatar-size: 2.5rem;
+}
+.comments .wl-panel { margin: 0; }
+.comments .wl-btn.primary { color: var(--bg); }
 
 /* home */
 .intro { margin-bottom: 2.8rem; color: var(--muted); }

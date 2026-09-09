@@ -27,16 +27,14 @@ export type SectionKey = keyof typeof SECTIONS;
 export const SECTION_KEYS = Object.keys(SECTIONS) as SectionKey[];
 
 /**
- * giscus 评论（基于 GitHub Discussions）。
- * 四个值都在 https://giscus.app 页面上按提示生成后填进来；repo 留空则不显示评论区。
+ * Waline 评论：不用登录，游客可以匿名留言。
+ * 按 README「评论」一节把评论服务部署到 Vercel 后，把它的地址填到 serverURL；留空则不显示评论区。
  */
-export const GISCUS = {
-  repo: 'BlueX888/BlueX888.github.io',
-  repoId: 'R_kgDOUR0wEQ',
-  category: 'Announcements',
-  categoryId: 'DIC_kwDOUR0wEc4DFHGm',
-  mapping: 'pathname',
-  lang: 'zh-CN',
+export const WALINE = {
+  /** 评论服务地址，例如 'https://xxx.vercel.app'，末尾不要加斜杠 */
+  serverURL: '',
+  /** 留言时展示哪些信息栏（都不是必填）：'nick' 昵称、'mail' 邮箱（有人回复时可收邮件）、'link' 网址 */
+  meta: ['nick', 'mail'] as const,
 };
 
 /**
