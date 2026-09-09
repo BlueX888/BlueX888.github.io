@@ -14,6 +14,7 @@ const years = [...new Set(posts.map((p) => p.data.date.getFullYear()))];
 ---
 <Base title={info.name} description={info.description}>
   <div class="page-title">
+    <p class="eyebrow">栏目 / {section.toUpperCase()}</p>
     <h1>{info.name}</h1>
     <p>{info.description} · 共 {posts.length} 篇</p>
   </div>

@@ -6,6 +6,7 @@ import Comments from '../../components/Comments.astro';
 import Pageview from '../../components/Pageview.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { SECTIONS } from '../../site.config';
+import { ArrowLeft, ArrowRight } from '@lucide/astro';
 import { getPosts, postSlug, postTitle, postUrl, wordCount, excerpt, updatedDate, type Post } from '../../lib/posts';
 
 export async function getStaticPaths() {
@@ -28,9 +29,10 @@ const section = SECTIONS[post.collection];
 const words = wordCount(post.body);
 const updated = updatedDate(post);
 ---
-<Base title={title} description={excerpt(post)} article={{ date: post.data.date, updated }}>
-  <article data-pagefind-body>
-    <header>
+<Base title={title} description={excerpt(post)} article={{ date: post.data.date, updated }} reading>
+  <a class="back-link" href={`/${post.collection}/`}><ArrowLeft size={16} aria-hidden="true" />{section.name}</a>
+  <article class="reading-article" data-pagefind-body>
+    <header class="article-header">
       <h1>{title}</h1>
       <div class="meta">
         <a href={`/${post.collection}/`} data-pagefind-filter="栏目">{section.name}</a>
@@ -47,8 +49,8 @@ const updated = updatedDate(post);
   </article>
   {(newer || older) && (
     <nav class="post-nav" aria-label="上下篇">
-      {older ? <a href={postUrl(older)}><span>较早文章</span>{postTitle(older)}</a> : <span />}
-      {newer ? <a href={postUrl(newer)} style="text-align:right"><span>较新文章</span>{postTitle(newer)}</a> : <span />}
+      {older ? <a href={postUrl(older)}><span><ArrowLeft size={14} aria-hidden="true" />较早文章</span>{postTitle(older)}</a> : <span />}
+      {newer ? <a class="post-nav-newer" href={postUrl(newer)}><span>较新文章<ArrowRight size={14} aria-hidden="true" /></span>{postTitle(newer)}</a> : <span />}
     </nav>
   )}
   <Comments />

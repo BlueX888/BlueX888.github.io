@@ -3,6 +3,7 @@ import FormattedDate from './FormattedDate.astro';
 import { SECTIONS } from '../site.config';
 import type { Post } from '../lib/posts';
 import { postTitle, postUrl } from '../lib/posts';
+import { ArrowUpRight } from '@lucide/astro';
 
 interface Props { posts: Post[]; showSection?: boolean; groupByYear?: boolean; withYear?: boolean }
 const { posts, showSection = false, groupByYear = false, withYear = true } = Astro.props;
@@ -24,10 +25,9 @@ const groups: [string, Post[]][] = groupByYear
       {list.map((p) => (
         <li>
           <FormattedDate date={p.data.date} withYear={withYear && !groupByYear} />
-          <span>
-            <a href={postUrl(p)}>{postTitle(p)}</a>
-            {showSection && <span class="section-tag">{SECTIONS[p.collection].name}</span>}
-          </span>
+          <a class="post-list-title" href={postUrl(p)}>{postTitle(p)}</a>
+          {showSection && <a class="section-tag" href={`/${p.collection}/`}>{SECTIONS[p.collection].name}</a>}
+          <ArrowUpRight class="list-arrow" size={16} aria-hidden="true" />
         </li>
       ))}
     </ul>

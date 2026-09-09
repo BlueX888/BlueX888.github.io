@@ -10,8 +10,9 @@ interface Props {
   description?: string;
   /** 文章页传入，用于 og:type 与结构化数据 */
   article?: { date: Date; updated?: Date };
+  reading?: boolean;
 }
-const { title, description = SITE.description, article } = Astro.props;
+const { title, description = SITE.description, article, reading = false } = Astro.props;
 const fullTitle = title ? `${title} · ${SITE.title}` : SITE.title;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -43,15 +44,18 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <script is:inline>
       // 尽早应用主题，避免闪烁
       (function () {
-        var t = localStorage.getItem('theme');
-        if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+        try {
+          var t = localStorage.getItem('theme');
+          if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+        } catch {}
       })();
     </script>
     <Analytics />
   </head>
   <body>
+    <a class="skip-link" href="#main">跳至内容</a>
     <Header />
-    <main class="wrap">
+    <main id="main" class:list={['wrap', { 'reading-wrap': reading }]} tabindex="-1">
       <slot />
     </main>
     <Footer />

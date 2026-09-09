@@ -5,9 +5,9 @@ const page = await getEntry('pages', 'about');
 if (!page) throw new Error('缺少 content/pages/about.md');
 const { Content } = await render(page);
 ---
-<Base title={page.data.title}>
+<Base title={page.data.title} reading>
   <article data-pagefind-body>
-    <div class="page-title"><h1>{page.data.title}</h1></div>
+    <div class="page-title"><p class="eyebrow">ABOUT / 关于</p><h1>{page.data.title}</h1></div>
     <div class="prose"><Content /></div>
   </article>
 </Base>

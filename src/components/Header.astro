@@ -1,27 +1,29 @@
 ---
 import { SITE, SECTIONS } from '../site.config';
+import { Search, SunMoon } from '@lucide/astro';
 const path = Astro.url.pathname;
 const items = [
   ...Object.entries(SECTIONS).map(([key, s]) => ({ href: `/${key}/`, label: s.name })),
   { href: '/archive/', label: '归档' },
   { href: '/about/', label: '关于' },
-  { href: '/search/', label: '搜索' },
 ];
 const isCurrent = (href: string) => path === href || (href !== '/' && path.startsWith(href));
 ---
 <header class="site-header">
   <div class="wrap">
     <div class="brand-block">
-      <a class="brand" href="/">{SITE.title}</a>
-      <div class="tagline">
-        {SITE.subtitle && <span class="tagline-sub">『{SITE.subtitle}』</span>}
-        <span class="tagline-desc">{SITE.description}</span>
-      </div>
+      <a class="brand" href="/" aria-label={`${SITE.title} · 首页`}>
+        <span class="brand-mark" aria-hidden="true">然</span>
+        <span>{SITE.title}</span>
+      </a>
     </div>
     <nav class="nav" aria-label="主导航">
       {items.map((i) => <a href={i.href} aria-current={isCurrent(i.href) ? 'page' : undefined}>{i.label}</a>)}
-      <button id="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色"><span aria-hidden="true">◐</span></button>
     </nav>
+    <div class="header-tools">
+      <a class="icon-button" href="/search/" aria-label="搜索" title="搜索" aria-current={isCurrent('/search/') ? 'page' : undefined}><Search size={18} aria-hidden="true" /></a>
+      <button class="icon-button" id="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色"><SunMoon size={18} aria-hidden="true" /></button>
+    </div>
   </div>
 </header>
 <script>
@@ -32,7 +34,7 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
     const current = root.dataset.theme ?? (systemDark ? 'dark' : 'light');
     const next = current === 'dark' ? 'light' : 'dark';
     root.dataset.theme = next;
-    localStorage.setItem('theme', next);
+    try { localStorage.setItem('theme', next); } catch {}
     btn?.setAttribute('aria-label', next === 'dark' ? '切换到浅色' : '切换到深色');
     btn?.setAttribute('title', next === 'dark' ? '切换到浅色' : '切换到深色');
   });

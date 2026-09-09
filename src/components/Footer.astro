@@ -4,7 +4,7 @@ const year = new Date().getFullYear();
 ---
 <footer class="site-footer">
   <div class="wrap">
-    <span>© {year} {SITE.author}{SITE.subtitle && ` · ${SITE.subtitle}`}</span>
-    <span><a href="/rss.xml">RSS</a> · <a href="/sitemap-index.xml">站点地图</a></span>
+    <span class="footer-credit"><span class="footer-mark" aria-hidden="true">然</span>© {year} {SITE.author}{SITE.subtitle && ` · ${SITE.subtitle}`}</span>
+    <span class="footer-links"><a href="/rss.xml">RSS 订阅</a><a href="/sitemap-index.xml">站点地图</a></span>
   </div>
 </footer>

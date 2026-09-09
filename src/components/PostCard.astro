@@ -1,11 +1,12 @@
 ---
 import FormattedDate from './FormattedDate.astro';
+import { ArrowUpRight } from '@lucide/astro';
 import { SECTIONS } from '../site.config';
 import { postTitle, postUrl, excerpt, type Post } from '../lib/posts';
 
 interface Props { post: Post }
 const { post } = Astro.props;
-const summary = excerpt(post, 50);
+const summary = excerpt(post, 90);
 ---
 <article class="card">
   <div class="card-meta">
@@ -15,5 +16,5 @@ const summary = excerpt(post, 50);
   </div>
   <h3 class="card-title"><a href={postUrl(post)}>{postTitle(post)}</a></h3>
   {summary && <p class="card-excerpt">{summary}</p>}
-  <p class="card-more"><a href={postUrl(post)}>阅读更多</a></p>
+  <p class="card-more"><a href={postUrl(post)} aria-label={`阅读全文：${postTitle(post)}`}>阅读全文 <ArrowUpRight size={15} aria-hidden="true" /></a></p>
 </article>

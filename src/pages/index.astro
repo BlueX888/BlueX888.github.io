@@ -1,15 +1,30 @@
 ---
 import Base from '../layouts/Base.astro';
 import PostCard from '../components/PostCard.astro';
+import { ArrowUpRight } from '@lucide/astro';
 import { SITE } from '../site.config';
 import { getPosts } from '../lib/posts';
 const posts = (await getPosts()).slice(0, SITE.recentCount);
 ---
 <Base>
-  <h2>最近</h2>
-  <div class="cards">
-    {posts.map((p) => <PostCard post={p} />)}
-    {posts.length === 0 && <p class="intro">这里还什么都没有。</p>}
-  </div>
-  <p class="more"><a href="/archive/">全部文章 →</a></p>
+  <section class="journal-cover" aria-labelledby="home-title">
+    <img class="cover-landscape" src="/images/mountain-halftone.webp" width="1800" height="680" alt="" fetchpriority="high" />
+    <div class="cover-copy">
+      <p class="eyebrow"><span class="ink-tick" aria-hidden="true"></span>{SITE.author}的个人记录</p>
+      <h1 id="home-title">{SITE.title}</h1>
+      {SITE.subtitle && <p class="cover-subtitle">{SITE.subtitle}</p>}
+      <p class="cover-description">{SITE.description}</p>
+    </div>
+    <span class="cover-imprint" aria-hidden="true">CHAORAN / JOURNAL</span>
+  </section>
+  <section class="recent-posts" aria-labelledby="recent-title">
+    <div class="section-heading">
+      <h2 id="recent-title"><span class="section-number" aria-hidden="true">01</span>最近</h2>
+      <a class="text-link" href="/archive/">全部文章 <ArrowUpRight size={16} aria-hidden="true" /></a>
+    </div>
+    <div class="cards">
+      {posts.map((p) => <PostCard post={p} />)}
+      {posts.length === 0 && <p class="intro">这里还什么都没有。</p>}
+    </div>
+  </section>
 </Base>

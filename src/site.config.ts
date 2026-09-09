@@ -11,7 +11,7 @@ export const SITE = {
   /** 线上地址，末尾不要加斜杠。GitHub Pages 的地址是 https://<用户名>.github.io */
   url: 'https://bluex888.github.io',
   lang: 'zh-CN',
-  /** 首页「最近」列表显示几篇（三栏卡片墙，取 3 的倍数正好满行；发文后记得加） */
+  /** 首页「最近」列表显示几篇 */
   recentCount: 6,
 } as const;
 
