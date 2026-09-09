@@ -3,10 +3,12 @@
   --fg: #1f1f1f;
   --muted: #7a7a72;
   --line: #e6e6e1;
+  --line-strong: #c8c8c0;
   --accent: #2f5d50;
   --code-bg: #f3f3ef;
   --mark: #fff3b0;
-  --max: 46rem;
+  --max: 64rem;
+  --max-read: 46rem;
   --serif: 'Noto Serif SC', 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', Georgia, serif;
   --sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Source Han Sans SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
   --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
@@ -17,6 +19,7 @@
   --fg: #dcdcd6;
   --muted: #8b8b84;
   --line: #2a2a2a;
+  --line-strong: #3a3a3a;
   --accent: #8fbfae;
   --code-bg: #1e1e1e;
   --mark: #4a4220;
@@ -27,6 +30,7 @@
     --fg: #dcdcd6;
     --muted: #8b8b84;
     --line: #2a2a2a;
+    --line-strong: #3a3a3a;
     --accent: #8fbfae;
     --code-bg: #1e1e1e;
     --mark: #4a4220;
@@ -57,11 +61,10 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 2.5rem 0; }
 .site-header { padding: 2.5rem 0 2rem; }
 .site-header .wrap { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .brand-block { display: flex; flex-direction: column; gap: .15rem; }
+.brand { font-family: var(--serif); font-size: 1.35rem; font-weight: 600; letter-spacing: .12em; text-decoration: none; }
 .tagline { display: flex; flex-direction: column; gap: .05rem; font-size: .88rem; color: var(--muted); line-height: 1.6; }
 .tagline-sub { font-family: var(--serif); color: var(--fg); letter-spacing: .06em; }
-.site-header--home { padding-bottom: 2.6rem; }
-.brand { font-family: var(--serif); font-size: 1.35rem; font-weight: 600; letter-spacing: .12em; text-decoration: none; }
-.nav { display: flex; gap: 1.1rem; flex-wrap: wrap; font-size: .92rem; color: var(--muted); }
+.nav { display: flex; gap: 1.1rem; flex-wrap: wrap; font-size: .98rem; color: var(--muted); }
 .nav a { text-decoration: none; }
 .nav a[aria-current='page'] { color: var(--fg); }
 .nav button {
@@ -96,7 +99,7 @@ h3 { font-size: 1.1rem; margin: 2rem 0 .6rem; }
 /* article */
 .meta { color: var(--muted); font-size: .88rem; display: flex; gap: .9rem; flex-wrap: wrap; margin-bottom: 2.2rem; }
 .meta a { text-decoration: none; }
-.prose { font-size: 1.02rem; font-family: var(--serif); }
+.prose { font-size: 1.02rem; font-family: var(--serif); max-width: var(--max-read); }
 .prose p { margin: 0 0 1.25rem; }
 .prose blockquote { margin: 1.5rem 0; padding: .2rem 0 .2rem 1.1rem; border-left: 2px solid var(--accent); color: var(--muted); }
 .prose blockquote p { margin: .3rem 0; }
@@ -150,10 +153,6 @@ h3 { font-size: 1.1rem; margin: 2rem 0 .6rem; }
 .comments .wl-btn.primary { color: var(--bg); }
 
 /* home */
-.home-intro { margin: .5rem 0 3.2rem; max-width: 36rem; }
-.home-intro h1 { margin-bottom: .3rem; }
-.home-intro p:last-child { margin: 0; color: var(--muted); }
-.eyebrow { margin: 0 0 .7rem; color: var(--accent); font-size: .78rem; letter-spacing: .12em; }
 .intro { margin-bottom: 2.8rem; color: var(--muted); }
 .intro p { margin: 0; }
 .more { margin-top: 1.2rem; font-size: .9rem; }
@@ -165,9 +164,8 @@ h3 { font-size: 1.1rem; margin: 2rem 0 .6rem; }
 @media (max-width: 600px) {
   html { font-size: 16px; }
   .site-header { padding: 1.8rem 0 1.5rem; }
-  .home-intro { margin-top: 0; margin-bottom: 2.4rem; }
   .site-header .wrap { align-items: flex-start; }
-  .nav { gap: .65rem .9rem; font-size: .88rem; }
+  .nav { gap: .65rem .95rem; font-size: .93rem; }
   .post-list li { flex-direction: column; gap: 0; padding: .55rem 0; }
   .post-list time { flex: none; }
 }
@@ -180,20 +178,26 @@ h3 { font-size: 1.1rem; margin: 2rem 0 .6rem; }
 .prose .footnotes h2 { font-size: .9rem; color: var(--muted); margin: 0 0 .4rem; }
 .prose .footnotes ol { padding-left: 1.2rem; }
 
-/* cards */
-.cards { display: flex; flex-direction: column; gap: .8rem; }
-.card { border: 1px solid var(--line); border-radius: 6px; padding: 1.15rem 1.35rem 1.1rem; background: var(--bg); transition: border-color .2s; }
-.card:hover { border-color: var(--accent); }
-.card-title { margin: 0 0 .3rem; font-size: 1.2rem; font-family: var(--serif); }
-.card-title a { text-decoration: none; }
-.card-title a:hover { color: var(--accent); }
-.card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem .75rem; color: var(--muted); font-size: .82rem; font-variant-numeric: tabular-nums; }
-.card-meta > * + *::before { content: '·'; margin-right: .75rem; opacity: .6; }
+/* cards — 无边框三栏卡片墙，参考站排版：分类+日期 → 标题 → 摘要 → 阅读更多 */
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.75rem 2.5rem; }
+.card { border-top: 1px solid var(--line); padding-top: 1rem; min-width: 0; }
+.card-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem .75rem; color: var(--muted); font-size: .8rem; font-variant-numeric: tabular-nums; }
 .card-section { color: var(--accent); }
 .card-meta a { text-decoration: none; }
-.card-meta a:hover { color: var(--accent); }
-.card-excerpt { margin: .6rem 0 0; color: var(--muted); font-size: .93rem; line-height: 1.75; }
+.card-meta a:hover { color: var(--fg); }
+.card-date { margin-left: auto; }
+.card-draft { color: var(--muted); }
+.card-title { margin: .7rem 0 0; font-size: 1.18rem; line-height: 1.45; font-family: var(--serif); }
+.card-title a { text-decoration: none; }
+.card-title a:hover { color: var(--accent); }
+.card-excerpt { margin: .55rem 0 0; color: var(--muted); font-size: .9rem; line-height: 1.7; }
+.card-excerpt:empty { margin: 0; }
+.card-more { margin: .7rem 0 0; }
+.card-more a { text-decoration: none; color: var(--muted); font-size: .82rem; }
+.card-more a:hover { color: var(--fg); }
+.card-more a::before { content: '—'; margin-right: .5rem; color: var(--line-strong); }
 .year + .cards, section + section { margin-top: 0; }
 section .year { margin-top: 2.2rem; }
 section:first-of-type .year { margin-top: 0; }
-@media (max-width: 600px) { .card { padding: 1.1rem 1.1rem 1rem; border-radius: 6px; } }
+@media (max-width: 900px) { .cards { grid-template-columns: repeat(2, 1fr); gap: 2.25rem 2rem; } }
+@media (max-width: 600px) { .cards { grid-template-columns: 1fr; gap: 2.25rem; } }

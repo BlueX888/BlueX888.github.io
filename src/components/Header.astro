@@ -1,7 +1,6 @@
 ---
 import { SITE, SECTIONS } from '../site.config';
 const path = Astro.url.pathname;
-const isHome = path === '/';
 const items = [
   ...Object.entries(SECTIONS).map(([key, s]) => ({ href: `/${key}/`, label: s.name })),
   { href: '/archive/', label: '归档' },
@@ -10,16 +9,14 @@ const items = [
 ];
 const isCurrent = (href: string) => path === href || (href !== '/' && path.startsWith(href));
 ---
-<header class:list={['site-header', { 'site-header--home': isHome }]}>
+<header class="site-header">
   <div class="wrap">
     <div class="brand-block">
       <a class="brand" href="/">{SITE.title}</a>
-      {isHome && (
-        <div class="tagline">
-          {SITE.subtitle && <span class="tagline-sub">『{SITE.subtitle}』</span>}
-          <span class="tagline-desc">{SITE.description}</span>
-        </div>
-      )}
+      <div class="tagline">
+        {SITE.subtitle && <span class="tagline-sub">『{SITE.subtitle}』</span>}
+        <span class="tagline-desc">{SITE.description}</span>
+      </div>
     </div>
     <nav class="nav" aria-label="主导航">
       {items.map((i) => <a href={i.href} aria-current={isCurrent(i.href) ? 'page' : undefined}>{i.label}</a>)}

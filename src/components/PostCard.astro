@@ -1,20 +1,19 @@
 ---
 import FormattedDate from './FormattedDate.astro';
 import { SECTIONS } from '../site.config';
-import { postTitle, postUrl, excerpt, updatedDate, type Post } from '../lib/posts';
+import { postTitle, postUrl, excerpt, type Post } from '../lib/posts';
 
 interface Props { post: Post }
 const { post } = Astro.props;
-const updated = updatedDate(post);
 const summary = excerpt(post, 50);
 ---
 <article class="card">
-  <h3 class="card-title"><a href={postUrl(post)}>{postTitle(post)}</a></h3>
   <div class="card-meta">
     <a class="card-section" href={`/${post.collection}/`}>{SECTIONS[post.collection].name}</a>
-    <span>发表于 <FormattedDate date={post.data.date} withYear /></span>
-    {updated && <span>修订于 <FormattedDate date={updated} withYear /></span>}
-    {post.data.draft && <span>草稿</span>}
+    <span class="card-date"><FormattedDate date={post.data.date} withYear /></span>
+    {post.data.draft && <span class="card-draft">草稿</span>}
   </div>
+  <h3 class="card-title"><a href={postUrl(post)}>{postTitle(post)}</a></h3>
   {summary && <p class="card-excerpt">{summary}</p>}
+  <p class="card-more"><a href={postUrl(post)}>阅读更多</a></p>
 </article>
