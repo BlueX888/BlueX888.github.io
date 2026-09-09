@@ -1,0 +1,123 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+# Sveltia CMS 配置。打开 https://bluex888.github.io/admin/ 即可写文章。
+# 登录：点「使用令牌登录」，按提示在 GitHub 生成一个令牌粘贴进去，只需要做一次。
+# 文档：https://sveltiacms.app/en/docs
+
+backend:
+  name: github
+  repo: BlueX888/BlueX888.github.io
+  branch: main
+
+site_url: https://bluex888.github.io
+display_url: https://bluex888.github.io
+
+# 图片：和 Pages CMS 一致，存到 content/attachments，正文里写成 /attachments/xxx.png
+media_folder: content/attachments
+public_folder: /attachments
+
+# 文件名保留中文；{{hour}}{{minute}} 用本地时区
+slug:
+  encoding: unicode
+  clean_accents: false
+  timezone: local
+
+# 所有正文编辑器的默认设置：一排常驻按钮 + 图片按钮 + 可切换到 Markdown 源码
+field_defaults:
+  richtext:
+    buttons: [bold, italic, strikethrough, code, link, heading-two, heading-three, bulleted-list, numbered-list, quote]
+    editor_components: [image, code-block]
+    modes: [rich_text, raw]
+    use_markdown_shortcuts: true
+
+collections:
+  - name: diary
+    label: 日记
+    label_singular: 日记
+    icon: today
+    folder: content/diary
+    create: true
+    extension: md
+    format: yaml-frontmatter
+    slug: "{{fields.date}}"
+    identifier_field: date
+    summary: "{{date}}　{{title}}"
+    sortable_fields:
+      fields: [date]
+      default: { field: date, direction: descending }
+    fields:
+      - { name: date, label: 日期, widget: datetime, type: date, default: "{{now}}" }
+      - { name: title, label: 标题, widget: string, required: false, hint: 可不填，网页上会显示成「2026年9月8日」 }
+      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示；写完后关掉再点「保存」就是发布上线" }
+      - { name: body, label: 正文, widget: richtext, required: false }
+
+  - name: weekly
+    label: 周记
+    label_singular: 周记
+    icon: date_range
+    folder: content/weekly
+    create: true
+    extension: md
+    format: yaml-frontmatter
+    slug: "{{fields.date}}"
+    summary: "{{title}}　{{date}}"
+    sortable_fields:
+      fields: [date, title]
+      default: { field: date, direction: descending }
+    fields:
+      - { name: title, label: 标题, widget: string, hint: 例如「2026 年第 37 周」 }
+      - { name: date, label: 日期, widget: datetime, type: date, default: "{{now}}" }
+      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示；写完后关掉再点「保存」就是发布上线" }
+      - { name: body, label: 正文, widget: richtext, required: false }
+
+  - name: learning
+    label: 学习
+    label_singular: 学习记录
+    icon: school
+    folder: content/learning
+    create: true
+    extension: md
+    format: yaml-frontmatter
+    slug: "{{fields.date}}-{{hour}}{{minute}}"
+    summary: "{{title}}　{{date}}"
+    sortable_fields:
+      fields: [date, title]
+      default: { field: date, direction: descending }
+    fields:
+      - { name: title, label: 标题, widget: string }
+      - { name: date, label: 日期, widget: datetime, type: date, default: "{{now}}" }
+      - { name: description, label: 一句话摘要, widget: text, required: false, hint: 用于列表、RSS 和搜索引擎，可不填 }
+      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示；写完后关掉再点「保存」就是发布上线" }
+      - { name: slug, label: 网址后缀, widget: string, required: false, hint: "可不填。填英文，如 python-basics，网址就是 /learning/python-basics/", pattern: ["^[a-z0-9-]*$", "只能用小写英文字母、数字和短横线"] }
+      - { name: body, label: 正文, widget: richtext, required: false }
+
+  - name: reading
+    label: 读书
+    label_singular: 读书笔记
+    icon: menu_book
+    folder: content/reading
+    create: true
+    extension: md
+    format: yaml-frontmatter
+    slug: "{{fields.date}}-{{hour}}{{minute}}"
+    summary: "{{title}}　{{date}}"
+    sortable_fields:
+      fields: [date, title]
+      default: { field: date, direction: descending }
+    fields:
+      - { name: title, label: 标题, widget: string }
+      - { name: date, label: 日期, widget: datetime, type: date, default: "{{now}}" }
+      - { name: description, label: 一句话摘要, widget: text, required: false, hint: 用于列表、RSS 和搜索引擎，可不填 }
+      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示；写完后关掉再点「保存」就是发布上线" }
+      - { name: slug, label: 网址后缀, widget: string, required: false, hint: "可不填。填英文，如 sapiens，网址就是 /reading/sapiens/", pattern: ["^[a-z0-9-]*$", "只能用小写英文字母、数字和短横线"] }
+      - { name: body, label: 正文, widget: richtext, required: false }
+
+  - name: pages
+    label: 页面
+    icon: description
+    files:
+      - name: about
+        label: 关于页
+        file: content/pages/about.md
+        fields:
+          - { name: title, label: 标题, widget: string }
+          - { name: body, label: 正文, widget: richtext, required: false }

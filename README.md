@@ -4,15 +4,21 @@
 
 ## 在网页上写（推荐）
 
-站点接入了 [Pages CMS](https://pagescms.org)，一个开源的网页编辑器，直接读写 GitHub 仓库里的 Markdown，不需要额外服务器。
+站点自带一个网页编辑器 [Sveltia CMS](https://sveltiacms.app)，地址是 **https://bluex888.github.io/admin/** 。它直接读写 GitHub 仓库里的 Markdown，不需要额外服务器，界面是中文。
 
-1. 打开 https://app.pagescms.org ，用 GitHub 账号登录（沿用 GitHub 的两步验证）
-2. 首次使用会要求安装 Pages CMS 的 GitHub App，选择 **Only select repositories**，只勾 `BlueX888.github.io`
-3. 进入仓库后左侧就是「读书 / 学习 / 日记 / 周记 / 关于页」，点 **Add entry** 新建，写完点 **Save**
+首次登录（只做一次）：
 
-保存即提交到仓库，一两分钟后自动上线。编辑器有工具栏（标题、粗体、引用、代码、链接、表格），支持拖拽或粘贴图片（自动存到 `content/attachments/`），勾选「草稿」可以先存着不发布。
+1. 打开 https://bluex888.github.io/admin/ ，点 **使用访问令牌登录**
+2. 弹窗里有个链接，点它会跳到 GitHub 生成令牌的页面（权限已经预选好），名字随便填，过期时间选 **No expiration**，点 **Generate token**
+3. 把生成的那串令牌复制回弹窗，确定。以后打开这个网址就直接进后台，不用再登录
 
-安全说明：Pages CMS 只能访问你勾选的这一个仓库；写入的每一次提交都在 GitHub 提交记录里可查、可回滚。要撤销授权，到 GitHub → Settings → Applications → Installed GitHub Apps 卸载即可。配置在仓库根目录的 `.pages.yml`。
+写文章：左侧是「日记 / 周记 / 学习 / 读书 / 页面」，点右上角 **+** 新建。正文上方有一排按钮：段落样式（标题、列表、引用、代码块）、**加粗**、*斜体*、删除线、代码、链接、图片；最右边可以切换到 Markdown 源码。图片会自动存到 `content/attachments/`。
+
+保存与发布：**草稿**开关默认打开，此时点 **保存** 只是存到仓库，线上看不到；写完把开关关掉再点 **保存**，一两分钟后自动上线。
+
+安全说明：令牌只保存在你这台电脑的浏览器里；每次保存都是一次 GitHub 提交，可查、可回滚。要作废令牌，到 GitHub → Settings → Developer settings → Personal access tokens 删除即可。配置在 `public/admin/config.yml`。
+
+旧的 [Pages CMS](https://app.pagescms.org) 也还能用（配置在 `.pages.yml`），两边改的是同一批文件。
 
 ## 用 Obsidian 写（可选）
 
