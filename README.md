@@ -1,4 +1,4 @@
-# 朝然的博客
+# 朝向自然
 
 个人记录站点：读书、日记、学习、周记。用 [Astro](https://astro.build) 生成静态页面，内容用 Markdown 写在 `content/` 里，推送到 GitHub 后自动部署到 GitHub Pages。
 

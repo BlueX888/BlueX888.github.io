@@ -16,7 +16,7 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
       <a class="brand" href="/">{SITE.title}</a>
       {isHome && (
         <div class="tagline">
-          <span class="tagline-sub">『{SITE.subtitle}』</span>
+          {SITE.subtitle && <span class="tagline-sub">『{SITE.subtitle}』</span>}
           <span class="tagline-desc">{SITE.description}</span>
         </div>
       )}
