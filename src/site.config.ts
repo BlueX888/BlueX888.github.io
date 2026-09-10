@@ -33,7 +33,7 @@ export const SECTION_KEYS = Object.keys(SECTIONS) as SectionKey[];
  */
 export const WALINE = {
   /** 评论服务地址，例如 'https://xxx.vercel.app'，末尾不要加斜杠 */
-  serverURL: import.meta.env.PUBLIC_WALINE_SERVER_URL || '',
+  serverURL: import.meta.env.PUBLIC_WALINE_SERVER_URL || 'https://chaoran-comments.vercel.app',
   /** 留言时展示哪些信息栏（都不是必填）：'nick' 昵称、'mail' 邮箱（有人回复时可收邮件）、'link' 网址 */
   meta: ['nick', 'mail'] as const,
 };
