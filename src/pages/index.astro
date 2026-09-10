@@ -7,6 +7,12 @@ import { getPosts } from '../lib/posts';
 const posts = (await getPosts()).slice(0, SITE.recentCount);
 ---
 <Base>
+  <svg class="cover-defs" aria-hidden="true" focusable="false" width="0" height="0">
+    <filter id="cover-ripple" x="-4%" y="-10%" width="108%" height="120%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.0022 0.011" numOctaves="2" seed="3" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="14" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </svg>
   <section class="journal-cover" aria-labelledby="home-title">
     <img class="cover-landscape" src="/images/mountain-halftone.webp" width="1800" height="680" alt="" fetchpriority="high" />
     <div class="cover-copy">

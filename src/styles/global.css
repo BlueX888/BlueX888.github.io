@@ -12,7 +12,8 @@
   --serif: 'Noto Serif SC', 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', Georgia, serif;
   --sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
   --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-  --landscape-filter: none;
+  /* 必须是合法的滤镜函数：filter 里出现 `none` 会让整条声明失效 */
+  --landscape-filter: brightness(1);
   color-scheme: light;
 }
 :root[data-theme='dark'] {
@@ -97,27 +98,38 @@ h3 { font-size: 1.125rem; margin: 2rem 0 .75rem; }
 .text-link { display: inline-flex; gap: .5rem; align-items: center; min-height: 2.75rem; font-size: 1rem; text-decoration: none; }
 
 /* A single screened landscape shares the paper with live, selectable type. */
-.journal-cover { position: relative; isolation: isolate; min-height: 20rem; margin-top: -1.75rem; padding: 2.6rem 0 3.5rem; border-bottom: 1px solid var(--fg); }
+.journal-cover { position: relative; isolation: isolate; overflow: hidden; min-height: 20rem; margin-top: -1.75rem; padding: 2.6rem 0 3.5rem; border-bottom: 1px solid var(--fg); }
+.cover-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 .cover-landscape {
   position: absolute;
   z-index: -1;
+  /* 与封面内容盒严格重合：上缘压住导航底线，左右对齐版心，下缘落在分隔线上 */
+  inset: 0;
   width: 100%;
   height: 100%;
-  inset: 0;
   object-fit: cover;
-  object-position: center;
-  filter: var(--landscape-filter);
+  object-position: center top;
+  filter: var(--landscape-filter) url(#cover-ripple);
   pointer-events: none;
-  transform: scale(1.04) translate3d(0, 0, 0);
-  animation: cover-drift 18s ease-in-out infinite alternate;
+  /* 位移滤镜采样到画布外会透明，向内缩一点把边缘补回来 */
+  transform: scale(1.012) translateZ(0);
+  transform-origin: center center;
   will-change: transform;
+  animation: cover-swell 17s ease-in-out infinite;
 }
-@keyframes cover-drift {
-  from { transform: scale(1.04) translate3d(-.5%, -.35%, 0); }
-  to { transform: scale(1.08) translate3d(.5%, .35%, 0); }
+/* 山脊线本身已被位移滤镜打散，再让它极缓地起伏、错动，
+   远看就像水面把倒影揉开 */
+@keyframes cover-swell {
+  0%, 100% { transform: scale(1.012) translate3d(0, 0, 0) skewX(0deg); }
+  25% { transform: scale(1.026) translate3d(-.3%, .45%, 0) skewX(.35deg); }
+  50% { transform: scale(1.018) translate3d(.25%, -.3%, 0) skewX(-.2deg); }
+  75% { transform: scale(1.03) translate3d(.35%, .4%, 0) skewX(.25deg); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cover-landscape { animation: none; transform: scale(1.04); }
+  .cover-landscape {
+    animation: none;
+    transform: scale(1.012);
+  }
 }
 .cover-copy { max-width: 32rem; }
 .cover-copy .eyebrow { display: flex; align-items: center; gap: .6rem; margin: 0 0 1.1rem; font-size: 1rem; }
@@ -284,7 +296,7 @@ h3 { font-size: 1.125rem; margin: 2rem 0 .75rem; }
 }
 
 @media print {
-  :root, :root[data-theme], :root:not([data-theme='light']) { --bg: white; --fg: #30343a; --muted: #686b6e; --accent: #49645a; --line: #dcdcd7; --line-strong: #b0b1ae; --code-bg: #efefeb; --mark: #dde6de; --landscape-filter: none; color-scheme: light; }
+  :root, :root[data-theme], :root:not([data-theme='light']) { --bg: white; --fg: #30343a; --muted: #686b6e; --accent: #49645a; --line: #dcdcd7; --line-strong: #b0b1ae; --code-bg: #efefeb; --mark: #dde6de; --landscape-filter: brightness(1); color-scheme: light; }
   .nav, .header-tools, .back-link, .post-nav, .comments, .skip-link { display: none; }
   main.wrap { min-height: 0; }
   .site-header { margin-bottom: 2rem; }
