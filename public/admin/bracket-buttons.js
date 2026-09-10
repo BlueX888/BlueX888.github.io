@@ -1,184 +1,256 @@
-/* 朝向自然 · 写文章 —— 括弧包裹按钮
+/* 朝向自然 · 写文章 —— 括弧与波浪下划线按钮
  *
  * Sveltia CMS 的富文本编辑器（RTE）没有“自定义工具栏按钮”的接口：
  * field_defaults.richtext.buttons 只接受预定义按钮名。
- * 所以这里用零外部依赖的脚本直接往编辑器的工具栏注入一组括弧按钮。
+ * 所以这里用零外部依赖的脚本直接往编辑器的工具栏注入按钮。
  *
  * 原理：RTE 会监听 contenteditable 里的 beforeinput / input 事件。用
- * document.execCommand('insertText', …) 把「开括弧 + 选中文字 + 闭括弧」一次性替换
- * 选中内容，会走 RTE 自己的输入管道，内部状态和保存时的 Markdown 序列化都保持同步。
+ * document.execCommand('insertText', …) 一次性替换选中内容，会走 RTE 自己的输入管道，
+ * 内部状态和保存时的 Markdown 序列化都保持同步。
  * 脚本只碰 DOM 和系统输入命令，不依赖任何私有 API。
- *
- * 只修改本文件，并在 public/admin/index.html 里 <script> 引入。
  */
 
-(() => {
-  'use strict';
+'use strict';
 
-  // 常用全角括弧对，按使用频率排。想增删直接改这个数组即可。
-  const PAIRS = [
-    { open: '『', close: '』' },
-    { open: '《', close: '》' },
-    { open: '【', close: '】' },
-    { open: '「', close: '」' },
-    { open: '〈', close: '〉' },
-    { open: '〖', close: '〗' },
-    { open: '〔', close: '〕' },
-    { open: '［', close: '］' },
-    { open: '｛', close: '｝' },
-    { open: '（', close: '）' },
-  ];
+const WAVE = '\u0330';
+const PAIRS = [
+  { open: '『', close: '』' },
+  { open: '《', close: '》' },
+  { open: '【', close: '】' },
+  { open: '「', close: '」' },
+  { open: '〈', close: '〉' },
+  { open: '〖', close: '〗' },
+  { open: '〔', close: '〕' },
+  { open: '［', close: '］' },
+  { open: '｛', close: '｝' },
+  { open: '（', close: '）' },
+];
 
-  // 找出页面上所有“带工具栏的富文本编辑器容器”。
-  function getWrappers() {
-    const out = new Set();
-    for (const el of document.querySelectorAll('.wrapper')) {
-      const toolbar = el.querySelector('[role="toolbar"]');
-      const hasEditor =
-        el.querySelector('[contenteditable="true"]') ||
-        el.querySelector('.ProseMirror') ||
-        el.querySelector('textarea');
-      if (toolbar && hasEditor) out.add(el);
+export function addWavyUnderline(text) {
+  const clean = text.replaceAll(WAVE, '');
+  const parts =
+    typeof Intl.Segmenter === 'function'
+      ? [...new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(clean)].map(
+          ({ segment }) => segment,
+        )
+      : Array.from(clean);
+  return parts.map((part) => (/\s/u.test(part) ? part : part + WAVE)).join('');
+}
+
+// 找出页面上所有“带工具栏的富文本编辑器容器”。
+function getWrappers() {
+  const out = new Set();
+  for (const el of document.querySelectorAll('.wrapper')) {
+    const toolbar = el.querySelector('[role="toolbar"]');
+    const hasEditor =
+      el.querySelector('[contenteditable="true"]') ||
+      el.querySelector('.ProseMirror') ||
+      el.querySelector('textarea');
+    if (toolbar && hasEditor) out.add(el);
+  }
+  return [...out];
+}
+
+// Svelte 可能重建工具栏；MutationObserver 会自动补回按钮。
+function mount() {
+  for (const wrapper of getWrappers()) {
+    const toolbar = wrapper.querySelector('[role="toolbar"]');
+    if (!toolbar || toolbar.querySelector('[data-bracket-group]')) continue;
+
+    const group = document.createElement('div');
+    group.setAttribute('data-bracket-group', 'true');
+
+    const menu = document.createElement('div');
+    menu.setAttribute('data-bracket-menu', 'true');
+
+    const trigger = createButton('『』 ▾', '选择括号');
+    trigger.setAttribute('aria-haspopup', 'menu');
+    trigger.setAttribute('aria-expanded', 'false');
+
+    const popover = document.createElement('div');
+    popover.hidden = true;
+    popover.setAttribute('data-bracket-popover', 'true');
+    popover.setAttribute('role', 'menu');
+
+    trigger.addEventListener('click', () => {
+      const open = popover.hidden;
+      closeMenus();
+      popover.hidden = !open;
+      trigger.setAttribute('aria-expanded', String(open));
+    });
+
+    for (const pair of PAIRS) {
+      const button = createButton(
+        pair.open + pair.close,
+        `用 ${pair.open}${pair.close} 包裹选中的文字`,
+      );
+      button.setAttribute('role', 'menuitem');
+      button.addEventListener('click', () => {
+        wrapIn(wrapper, pair.open, pair.close);
+        closeMenus();
+      });
+      popover.appendChild(button);
     }
-    return [...out];
+
+    menu.append(trigger, popover);
+    group.append(menu, createWaveButton(wrapper));
+    toolbar.appendChild(group);
+  }
+}
+
+function createButton(label, title) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'sui button';
+  button.title = title;
+  button.setAttribute('aria-label', title);
+  button.textContent = label;
+  button.addEventListener('mousedown', (event) => event.preventDefault());
+  return button;
+}
+
+function createWaveButton(wrapper) {
+  const button = createButton('', '给选中的文字加波浪下划线');
+  const icon = document.createElement('span');
+  icon.textContent = 'U';
+  icon.setAttribute('data-wave-icon', 'true');
+  button.appendChild(icon);
+  button.addEventListener('click', () => transformSelection(wrapper, addWavyUnderline, 0));
+  return button;
+}
+
+function closeMenus() {
+  for (const popover of document.querySelectorAll('[data-bracket-popover]')) {
+    popover.hidden = true;
+    popover.previousElementSibling?.setAttribute('aria-expanded', 'false');
+  }
+}
+
+// 根据当前是富文本还是 Markdown/纯文本，选对应的插入方式。
+function transformSelection(wrapper, transform, caretBack) {
+  const rich = wrapper.querySelector('[contenteditable="true"], .ProseMirror');
+  const textarea = wrapper.querySelector('textarea');
+  if (rich && isVisible(rich)) {
+    replaceRichSelection(rich, transform, caretBack);
+  } else if (textarea && isVisible(textarea)) {
+    replaceTextareaSelection(textarea, transform, caretBack);
+  } else if (rich) {
+    replaceRichSelection(rich, transform, caretBack);
+  } else if (textarea) {
+    replaceTextareaSelection(textarea, transform, caretBack);
+  }
+}
+
+function wrapIn(wrapper, open, close) {
+  transformSelection(wrapper, (text) => open + text + close, close.length);
+}
+
+function isVisible(el) {
+  return !!(el.getClientRects().length || el.offsetWidth || el.offsetHeight);
+}
+
+// 富文本：用 execCommand 走 RTE 的输入管道。
+function replaceRichSelection(editor, transform, caretBack) {
+  editor.focus();
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return;
+  const range = selection.getRangeAt(0);
+  if (
+    !editor.contains(range.startContainer) ||
+    !editor.contains(range.endContainer)
+  ) {
+    return;
   }
 
-  // 往每个容器的工具栏里加一组括弧按钮。Svelte 可能重建工具栏导致按钮丢失，
-  // 所以每次进来先检查是否已存在；不存在才加。MutationObserver 会让它自动补回。
-  function mount() {
-    for (const wrapper of getWrappers()) {
-      const toolbar = wrapper.querySelector('[role="toolbar"]');
-      if (!toolbar || toolbar.querySelector('[data-bracket-group]')) continue;
-
-      const group = document.createElement('div');
-      group.setAttribute('data-bracket-group', 'true');
-      for (const pair of PAIRS) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'sui button';
-        btn.title = `用 ${pair.open}${pair.close} 包裹选中的文字`;
-        btn.textContent = pair.open + pair.close;
-        // 按下时阻止焦点离开编辑器，保住当前选区。
-        btn.addEventListener('mousedown', (e) => e.preventDefault());
-        btn.addEventListener('click', () =>
-          wrapIn(wrapper, pair.open, pair.close),
-        );
-        group.appendChild(btn);
-      }
-      toolbar.appendChild(group);
-    }
+  document.execCommand('insertText', false, transform(range.toString()));
+  if (caretBack) {
+    const end = getCaretPos(editor);
+    if (end != null) setCaret(editor, end - caretBack);
   }
+}
 
-  // 根据当前是富文本还是 Markdown/纯文本，选对应的插入方式。
-  function wrapIn(wrapper, open, close) {
-    const rich = wrapper.querySelector('[contenteditable="true"], .ProseMirror');
-    const ta = wrapper.querySelector('textarea');
-    if (rich && isVisible(rich)) {
-      wrapRich(rich, open, close);
-    } else if (ta && isVisible(ta)) {
-      wrapTextarea(ta, open, close);
-    } else if (rich) {
-      wrapRich(rich, open, close);
-    } else if (ta) {
-      wrapTextarea(ta, open, close);
-    }
-  }
+// Markdown / 纯文本（textarea）。
+function replaceTextareaSelection(textarea, transform, caretBack) {
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const value = textarea.value;
+  const replacement = transform(value.slice(start, end));
+  textarea.value = value.slice(0, start) + replacement + value.slice(end);
+  const caret = start + replacement.length - caretBack;
+  textarea.setSelectionRange(caret, caret);
+  textarea.dispatchEvent(new Event('input', { bubbles: true }));
+  textarea.focus();
+}
 
-  function isVisible(el) {
-    return !!(el.getClientRects().length || el.offsetWidth || el.offsetHeight);
-  }
+function getCaretPos(editor) {
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return null;
+  const range = selection.getRangeAt(0);
+  if (!range.collapsed) return null;
+  const before = range.cloneRange();
+  before.selectNodeContents(editor);
+  before.setEnd(range.endContainer, range.endOffset);
+  return before.toString().length;
+}
 
-  // —— 富文本：用 execCommand 走 RTE 的输入管道 ——
-  function wrapRich(editor, open, close) {
-    editor.focus();
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return;
-    const range = sel.getRangeAt(0);
-    if (
-      !editor.contains(range.startContainer) ||
-      !editor.contains(range.endContainer)
-    ) {
+function setCaret(editor, position) {
+  const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT);
+  let offset = 0;
+  let node;
+  while ((node = walker.nextNode())) {
+    const end = offset + node.textContent.length;
+    if (end >= position) {
+      const range = document.createRange();
+      range.setStart(node, position - offset);
+      range.collapse(true);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
       return;
     }
-
-    const text = range.toString();
-    const wrapped = open + text + close;
-
-    // 把选中文字一次性替换成「开括弧 + 文字 + 闭括弧」。
-    document.execCommand('insertText', false, wrapped);
-
-    // 光标此刻落在闭括弧后面。统一把它挪到开括弧与内容之间（空选区）
-    // 或开括弧之后、闭括弧之前（有选区），这样紧接着输入内容即可。
-    const end = getCaretPos(editor);
-    if (end != null) setSelection(editor, end - close.length, end - close.length);
+    offset = end;
   }
+}
 
-  // —— Markdown / 纯文本（textarea）——
-  function wrapTextarea(ta, open, close) {
-    const s = ta.selectionStart;
-    const e = ta.selectionEnd;
-    const v = ta.value;
-    const picked = v.slice(s, e);
-    ta.value = v.slice(0, s) + open + picked + close + v.slice(e);
-    const caret = s + open.length + picked.length;
-    ta.setSelectionRange(caret, caret);
-    ta.dispatchEvent(new Event('input', { bubbles: true }));
-    ta.focus();
-  }
-
-  // —— 字符偏移辅助 ——
-  // 编辑器内某个 DOM 节点/偏移 → 字符偏移（按所有文本节点累加）。
-  function nodeOffset(editor, node, offset) {
-    const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT);
-    let acc = 0;
-    let cur;
-    while ((cur = walker.nextNode())) {
-      if (cur === node) return acc + offset;
-      acc += cur.textContent.length;
+function injectStyles() {
+  if (document.querySelector('[data-editor-tools-style]')) return;
+  const style = document.createElement('style');
+  style.setAttribute('data-editor-tools-style', 'true');
+  style.textContent = `
+    [data-bracket-group] { display: contents; }
+    [data-bracket-menu] { position: relative; display: inline-flex; }
+    [data-bracket-popover] {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      z-index: 100;
+      display: grid;
+      grid-template-columns: repeat(5, max-content);
+      gap: 2px;
+      padding: 4px;
+      border: 1px solid var(--sui-textbox-border-color, #aaa);
+      background: var(--sui-background-color, Canvas);
+      box-shadow: 0 4px 12px rgb(0 0 0 / 18%);
     }
-    return null;
-  }
-
-  // 当前折叠光标在编辑器文本中的字符偏移；非折叠或取不到则返回 null。
-  function getCaretPos(editor) {
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return null;
-    const r = sel.getRangeAt(0);
-    if (!r.collapsed) return null;
-    return nodeOffset(editor, r.startContainer, r.startOffset);
-  }
-
-  // 字符偏移 → 具体的 {node, offset}（定位到某个文本节点内）。
-  function findPos(editor, pos) {
-    const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT);
-    let acc = 0;
-    let cur;
-    while ((cur = walker.nextNode())) {
-      const len = cur.textContent.length;
-      if (acc + len >= pos) {
-        return { node: cur, offset: pos - acc };
-      }
-      acc += len;
+    [data-bracket-popover][hidden] { display: none; }
+    [data-wave-icon] {
+      font-weight: 600;
+      text-decoration-line: underline;
+      text-decoration-style: wavy;
+      text-underline-offset: 3px;
     }
-    return null;
-  }
+  `;
+  document.head.appendChild(style);
+}
 
-  // 把选择/光标设为 [start, end] 字符偏移。
-  function setSelection(editor, start, end) {
-    const a = findPos(editor, start);
-    const b = findPos(editor, end);
-    if (!a || !b) return;
-    const r = document.createRange();
-    r.setStart(a.node, a.offset);
-    r.setEnd(b.node, b.offset);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(r);
-  }
-
-  // 页面一有 DOM 变化就尝试挂按钮（Svelte 重建后能自动补回）。
+if (typeof document !== 'undefined') {
+  injectStyles();
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element) || !event.target.closest('[data-bracket-menu]')) {
+      closeMenus();
+    }
+  });
   const observer = new MutationObserver(() => mount());
   observer.observe(document.body, { childList: true, subtree: true });
-
   mount();
-})();
+}
