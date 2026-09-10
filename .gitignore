@@ -1,6 +1,7 @@
 # build output
 dist/
 .astro/
+public/admin/sveltia-cms.js
 
 # dependencies
 node_modules/

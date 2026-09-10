@@ -20,6 +20,12 @@
 
 旧的 [Pages CMS](https://app.pagescms.org) 也还能用（配置在 `.pages.yml`），两边改的是同一批文件。
 
+### 图片保存失败
+
+若保存提示 Failed，不要把图片路径当成上传成功；先保留原图。刷新后只显示文件占位图时，点图片的「替换」重新选择原图，再保存。日记文字可能已保存，但图片文件未提交，重复保存一个失效路径不会补传图片。
+
+后台固定使用 Sveltia CMS `0.209.0`，由 `scripts/prepare-cms.mjs` 下载、校验 SHA-256 并生成本地脚本。补丁让保存流程只修改正文副本，避免失败后重试时漏传图片；`pnpm dev`、`pnpm build` 自动准备脚本，首次运行需要联网。回归检查：`node --test tests/cms-save.test.mjs`。上游修复后应复测并移除补丁，不要直接恢复无版本号的 CDN 地址。
+
 ## 用 Obsidian 写（可选）
 
 `content/` 文件夹也是一个 Obsidian 库：在 Obsidian 里「打开文件夹作为仓库」选中 `content/` 即可。配置已写好：链接用标准 Markdown 相对路径，图片自动存到 `content/attachments/`。
@@ -110,6 +116,19 @@ pnpm check      # 类型检查
 - `SECURE_DOMAINS=bluex888.github.io`：只允许本站调用评论服务
 
 注意：`vercel.app` 域名在国内部分网络下打不开，若国内访客看不到评论区，在 Vercel 的 Settings → Domains 绑一个自己的域名即可。
+
+## 浏览量
+
+填好 `src/site.config.ts` 中的 `WALINE.serverURL` 后，两处计数会一起启用：
+
+- 文章标题下显示当前文章的阅读次数。
+- 所有页面（包括首页）的页脚显示全站总浏览次数，访问首页、栏目、文章等公开页面都会累计；独立的 `/admin/` 编辑器不计入。
+
+两者共用上面的 Waline 服务和数据库，不需要另建统计服务。也可以在构建时设置环境变量 `PUBLIC_WALINE_SERVER_URL`，无需修改配置文件。
+
+统计的是浏览次数（PV），不是去重人数；刷新页面会再次计数。全站总量从启用这项功能时开始累计，不会补算过去的访问。开发模式和非 `SITE.url` 同源的预览只读取计数，不写入线上数据。服务未配置时隐藏计数，服务不可用时显示 `--`。
+
+计数逻辑测试：`node --experimental-strip-types --test tests/pageviews.test.mjs`。
 
 ## 部署
 

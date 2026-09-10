@@ -1,11 +1,24 @@
 ---
 import { WALINE } from '../site.config';
+interface Props { site?: boolean }
+const { site = false } = Astro.props;
 const enabled = Boolean(WALINE.serverURL);
-const path = Astro.url.pathname;
+// A non-URL key keeps the site total separate from every page, including "/".
+const path = site ? '__site_total__' : Astro.url.pathname;
 ---
 {enabled && (
-  <span aria-label="阅读量">
-    <span class="waline-pageview-count" data-path={path}>…</span>
-    次阅读
+  <span class="pageview" data-pageview data-server={WALINE.serverURL} data-path={path} data-pagefind-ignore>
+    {site && '全站浏览 '}
+    <span data-pageview-count>…</span>
+    {site ? ' 次' : ' 次阅读'}
   </span>
 )}
+<script>
+  import { loadPageviews } from '../lib/pageviews';
+  import { SITE } from '../site.config';
+
+  void loadPageviews(import.meta.env.PROD && location.origin === new URL(SITE.url).origin);
+</script>
+<style>
+  .pageview { white-space: nowrap; font-variant-numeric: tabular-nums; }
+</style>

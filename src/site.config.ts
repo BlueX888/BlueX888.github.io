@@ -29,11 +29,11 @@ export const SECTION_KEYS = Object.keys(SECTIONS) as SectionKey[];
 /**
  * Waline 评论：不用登录，游客可以匿名留言。
  * 按 README「评论」一节把评论服务部署到 Vercel 后，把它的地址填到 serverURL；留空则不显示评论区。
- * serverURL 同时启用文章页的「阅读量」计数（文章 meta 行，与评论区共用同一后端与数据库）。
+ * serverURL 同时启用文章阅读量和页脚全站浏览量，与评论区共用后端与数据库。
  */
 export const WALINE = {
   /** 评论服务地址，例如 'https://xxx.vercel.app'，末尾不要加斜杠 */
-  serverURL: '',
+  serverURL: import.meta.env.PUBLIC_WALINE_SERVER_URL || '',
   /** 留言时展示哪些信息栏（都不是必填）：'nick' 昵称、'mail' 邮箱（有人回复时可收邮件）、'link' 网址 */
   meta: ['nick', 'mail'] as const,
 };
