@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PostCard from '../../components/PostCard.astro';
 import { SECTIONS, SECTION_KEYS, type SectionKey } from '../../site.config';
 import { getPosts } from '../../lib/posts';
+import { dateParts } from '../../lib/dates';
 
 export async function getStaticPaths() {
   return SECTION_KEYS.map((section) => ({ params: { section } }));
@@ -10,7 +11,7 @@ export async function getStaticPaths() {
 const section = Astro.params.section as SectionKey;
 const info = SECTIONS[section];
 const posts = await getPosts(section);
-const years = [...new Set(posts.map((p) => p.data.date.getFullYear()))];
+const years = [...new Set(posts.map((p) => dateParts(p.data.date).year))];
 ---
 <Base title={info.name} description={info.description}>
   <div class="page-title">
@@ -22,7 +23,7 @@ const years = [...new Set(posts.map((p) => p.data.date.getFullYear()))];
     <section>
       {years.length > 1 && <h2 class="year">{y}</h2>}
       <div class="cards">
-        {posts.filter((p) => p.data.date.getFullYear() === y).map((p) => <PostCard post={p} />)}
+        {posts.filter((p) => dateParts(p.data.date).year === y).map((p) => <PostCard post={p} />)}
       </div>
     </section>
   ))}

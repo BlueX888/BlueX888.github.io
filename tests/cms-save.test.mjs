@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
 import ts from 'typescript';
-import { CMS_CACHE, CMS_OUTPUT, patchCms, prepareCms } from '../scripts/prepare-cms.mjs';
+import { CMS_CACHE, CMS_OUTPUT, patchCms, prepareCms, validateUploadSize } from '../scripts/prepare-cms.mjs';
 
 await prepareCms();
 const original = await readFile(CMS_CACHE, 'utf8');
@@ -119,4 +119,40 @@ test('the build rejects unverified bundles and serves only the patched local CMS
   const html = await readFile(new URL('../public/admin/index.html', import.meta.url), 'utf8');
   assert.match(html, /src="\/admin\/sveltia-cms\.js"/);
   assert.doesNotMatch(html, /src="https:\/\/unpkg\.com\/@sveltia\/cms/);
+});
+
+test('combined Base64 payload is checked before sending a save request', () => {
+  const file = (size) => new File([new Uint8Array(size)], 'photo.jpg');
+  assert.doesNotThrow(() => validateUploadSize([{ action: 'create', data: file(3 * 1024 * 1024) }]));
+  assert.throws(() => validateUploadSize([
+    { action: 'create', data: file(3 * 1024 * 1024 + 1) },
+  ]), /总量过大/);
+  assert.throws(() => validateUploadSize([
+    { action: 'create', data: file(2 * 1024 * 1024) },
+    { action: 'update', data: file(2 * 1024 * 1024) },
+  ]), /未发送保存请求/);
+  assert.doesNotThrow(() => validateUploadSize([
+    { action: 'delete', data: file(20 * 1024 * 1024) },
+    { action: 'update', data: '正文 ![](/attachments/existing.webp)' },
+  ]));
+  assert.throws(() => validateUploadSize([
+    { action: 'move', data: '图'.repeat(1024 * 1024 + 1) },
+  ]), /总量过大/);
+});
+
+test('the actual GitHub commit function refuses oversized uploads before any network call', async () => {
+  const ast = ts.createSourceFile('cms.js', patched, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS);
+  let commitSource;
+  function visit(node) {
+    if (ts.isVariableDeclaration(node) && node.name.getText(ast) === 'Cq') {
+      commitSource = node.initializer.getText(ast);
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(ast);
+  assert.ok(commitSource);
+  const commit = runInNewContext(`(${commitSource})`, { Blob });
+  await assert.rejects(commit([{
+    action: 'create', data: new Blob([new Uint8Array(8 * 1024 * 1024)]),
+  }], {}), /未发送保存请求/);
 });

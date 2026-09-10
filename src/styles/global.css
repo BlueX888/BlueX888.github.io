@@ -149,7 +149,7 @@ h3 { font-size: 1.125rem; margin: 2rem 0 .75rem; }
 
 .post-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
 .post-list li { display: flex; gap: 1.5rem; align-items: baseline; padding: 1.25rem 0; border-bottom: 1px solid var(--line); }
-.post-list time { flex: 0 0 6rem; font-family: var(--mono); color: var(--muted); font-size: .875rem; }
+.post-list time { flex: 0 0 10rem; font-family: var(--mono); color: var(--muted); font-size: .875rem; white-space: nowrap; }
 .post-list a { text-decoration: none; }
 .post-list-title { font-family: var(--serif); font-size: 1.125rem; flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .post-list .section-tag { color: var(--muted); font-size: .875rem; flex-shrink: 0; }

@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { SECTION_KEYS, type SectionKey } from '../site.config';
+import { dateParts } from './dates';
 
 export type Post = CollectionEntry<SectionKey>;
 
@@ -13,7 +14,7 @@ export async function getPosts(section?: SectionKey): Promise<Post[]> {
 }
 
 export function postSlug(p: Post): string {
-  return p.data.slug ?? p.id;
+  return p.data.slug?.trim() || p.id;
 }
 
 export function postUrl(p: Post): string {
@@ -23,8 +24,8 @@ export function postUrl(p: Post): string {
 /** 日记可以没有标题，用「2026年9月8日」代替 */
 export function postTitle(p: Post): string {
   if (p.data.title) return p.data.title;
-  const d = p.data.date;
-  return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+  const { year, month, day } = dateParts(p.data.date);
+  return `${year}年${Number(month)}月${Number(day)}日`;
 }
 
 /** 中文字数（按字符计，去掉空白与 Markdown 符号） */
@@ -77,5 +78,7 @@ export function updatedDate(p: Post): Date | undefined {
 }
 
 function sameDay(a: Date, b: Date) {
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  const first = dateParts(a);
+  const second = dateParts(b);
+  return ['year', 'month', 'day'].every((key) => first[key] === second[key]);
 }

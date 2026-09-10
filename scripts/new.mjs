@@ -57,6 +57,6 @@ if (existsSync(file)) {
 }
 const body = readFileSync(join('content', '_templates', `${template}.md`), 'utf8')
   .replaceAll('{{title}}', title)
-  .replaceAll('{{date}}', today);
+  .replaceAll('{{date}}', now.toISOString());
 writeFileSync(file, body);
 console.log(`已创建 ${file}`);

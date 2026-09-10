@@ -15,6 +15,16 @@ display_url: https://bluex888.github.io
 media_folder: content/attachments
 public_folder: /attachments
 
+# 上传前压缩，而不是等站点构建时才压缩，避免原图撑大 GitHub 保存请求。
+# 不转换 GIF，保留动画。
+media_libraries:
+  default:
+    config:
+      transformations:
+        jpeg: { format: webp, quality: 82, width: 2048, height: 2048 }
+        png: { format: webp, quality: 82, width: 2048, height: 2048 }
+        webp: { format: webp, quality: 82, width: 2048, height: 2048 }
+
 # 文件名保留中文；{{hour}}{{minute}} 用本地时区
 slug:
   encoding: unicode
@@ -38,14 +48,14 @@ collections:
     create: true
     extension: md
     format: yaml-frontmatter
-    slug: "{{fields.date}}"
+    slug: "{{year}}-{{month}}-{{day}}"
     identifier_field: date
     summary: "{{date}}　{{title}}"
     sortable_fields:
       fields: [date]
       default: { field: date, direction: descending }
     fields:
-      - { name: date, label: 日期, widget: datetime, type: date, default: "{{now}}" }
+      - { name: date, label: 发布时间, widget: datetime, type: datetime-local, input_timezone: Asia/Shanghai, output_utc: false, format: "YYYY-MM-DDTHH:mm:ssZ", default: "{{now}}" }
       - { name: title, label: 标题, widget: string, required: false, hint: 可不填，网页上会显示成「2026年9月8日」 }
       - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示；写完后关掉再点「保存」就是发布上线" }
       - { name: body, label: 正文, widget: richtext, required: false }
@@ -58,14 +68,14 @@ collections:
     create: true
     extension: md
     format: yaml-frontmatter
-    slug: "{{fields.date}}"
+    slug: "{{year}}-{{month}}-{{day}}"
     summary: "{{title}}　{{date}}"
     sortable_fields:
       fields: [date, title]
       default: { field: date, direction: descending }
     fields:
       - { name: title, label: 标题, widget: string, hint: 例如「2026 年第 37 周」 }
-      - { name: date, label: 日期, widget: datetime, type: date, default: "{{now}}" }
+      - { name: date, label: 发布时间, widget: datetime, type: datetime-local, input_timezone: Asia/Shanghai, output_utc: false, format: "YYYY-MM-DDTHH:mm:ssZ", default: "{{now}}" }
       - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示；写完后关掉再点「保存」就是发布上线" }
       - { name: body, label: 正文, widget: richtext, required: false }
 
@@ -77,14 +87,14 @@ collections:
     create: true
     extension: md
     format: yaml-frontmatter
-    slug: "{{fields.date}}-{{hour}}{{minute}}"
+    slug: "{{year}}-{{month}}-{{day}}-{{hour}}{{minute}}"
     summary: "{{title}}　{{date}}"
     sortable_fields:
       fields: [date, title]
       default: { field: date, direction: descending }
     fields:
       - { name: title, label: 标题, widget: string }
-      - { name: date, label: 日期, widget: datetime, type: date, default: "{{now}}" }
+      - { name: date, label: 发布时间, widget: datetime, type: datetime-local, input_timezone: Asia/Shanghai, output_utc: false, format: "YYYY-MM-DDTHH:mm:ssZ", default: "{{now}}" }
       - { name: description, label: 一句话摘要, widget: text, required: false, hint: 用于列表、RSS 和搜索引擎，可不填 }
       - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示；写完后关掉再点「保存」就是发布上线" }
       - { name: slug, label: 网址后缀, widget: string, required: false, hint: "可不填。填英文，如 python-basics，网址就是 /learning/python-basics/", pattern: ["^[a-z0-9-]*$", "只能用小写英文字母、数字和短横线"] }
@@ -98,14 +108,14 @@ collections:
     create: true
     extension: md
     format: yaml-frontmatter
-    slug: "{{fields.date}}-{{hour}}{{minute}}"
+    slug: "{{year}}-{{month}}-{{day}}-{{hour}}{{minute}}"
     summary: "{{title}}　{{date}}"
     sortable_fields:
       fields: [date, title]
       default: { field: date, direction: descending }
     fields:
       - { name: title, label: 标题, widget: string }
-      - { name: date, label: 日期, widget: datetime, type: date, default: "{{now}}" }
+      - { name: date, label: 发布时间, widget: datetime, type: datetime-local, input_timezone: Asia/Shanghai, output_utc: false, format: "YYYY-MM-DDTHH:mm:ssZ", default: "{{now}}" }
       - { name: description, label: 一句话摘要, widget: text, required: false, hint: 用于列表、RSS 和搜索引擎，可不填 }
       - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示；写完后关掉再点「保存」就是发布上线" }
       - { name: slug, label: 网址后缀, widget: string, required: false, hint: "可不填。填英文，如 sapiens，网址就是 /reading/sapiens/", pattern: ["^[a-z0-9-]*$", "只能用小写英文字母、数字和短横线"] }

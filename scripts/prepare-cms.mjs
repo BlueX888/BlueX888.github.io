@@ -14,14 +14,35 @@ export const CMS_OUTPUT = new URL('../public/admin/sveltia-cms.js', import.meta.
 const BEFORE = 'Object.entries(d).map(async([a,o])=>{let s=r?.[a]??t,c=U2';
 const AFTER = 'Object.entries(d).map(async([a,o])=>{o=sr(o);let s=r?.[a]??t,c=U2';
 
+// Keep Base64 additions below the request sizes that fail on this deployment.
+// Check the combined payload, including files restored from an older draft backup.
+export function validateUploadSize(changes) {
+  const bytes = changes.reduce((total, { action, data }) => {
+    if (!['create', 'update', 'move'].includes(action)) return total;
+    const size = data instanceof Blob ? data.size : new Blob([data ?? '']).size;
+    return total + 4 * Math.ceil(size / 3);
+  }, 0);
+  if (bytes > 4 * 1024 * 1024) {
+    throw new Error(
+      '\u672c\u6b21\u4fdd\u5b58\u7684\u65b0\u6587\u4ef6\u603b\u91cf\u8fc7\u5927\u3002' +
+      '\u8bf7\u5148\u4fdd\u7559\u539f\u56fe\uff0c\u70b9\u56fe\u7247\u300c\u66ff\u6362\u300d\u91cd\u65b0\u9009\u62e9\u539f\u56fe\u4ee5\u542f\u7528\u538b\u7f29\uff1b' +
+      '\u591a\u5f20\u56fe\u7247\u53ef\u5206\u6279\u4e0a\u4f20\u5230\u5a92\u4f53\u5e93\u540e\u518d\u63d2\u5165\u3002' +
+      '\u672c\u6b21\u672a\u53d1\u9001\u4fdd\u5b58\u8bf7\u6c42\uff0c\u8349\u7a3f\u4ecd\u4fdd\u7559\u3002',
+    );
+  }
+}
+
 export function patchCms(source) {
   if (createHash('sha256').update(source).digest('hex') !== CMS_SHA256) {
     throw new Error('Unexpected Sveltia CMS bundle. Refusing to apply the save-retry patch.');
   }
-  if (source.split(BEFORE).length !== 2) {
-    throw new Error('Sveltia CMS save-retry patch target must occur exactly once.');
+  const commitStart = 'Cq=async(e,t)=>{';
+  if (source.split(BEFORE).length !== 2 || source.split(commitStart).length !== 2) {
+    throw new Error('Sveltia CMS patch targets must occur exactly once.');
   }
-  return source.replace(BEFORE, AFTER);
+  return source
+    .replace(BEFORE, AFTER)
+    .replace(commitStart, `${commitStart}(${validateUploadSize.toString()})(e);`);
 }
 
 export async function prepareCms() {
