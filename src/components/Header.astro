@@ -13,7 +13,7 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
   <div class="wrap">
     <div class="brand-block">
       <a class="brand" href="/" aria-label={`${SITE.title} · 首页`}>
-        <span class="brand-mark" aria-hidden="true">然</span>
+        <svg class="brand-mark" viewBox="16 2 174 174" width="36" height="36" aria-hidden="true" focusable="false"><use href="/favicon.svg#brand-mark" /></svg>
         <span>{SITE.title}</span>
       </a>
     </div>
@@ -21,8 +21,8 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
       {items.map((i) => <a href={i.href} aria-current={isCurrent(i.href) ? 'page' : undefined}>{i.label}</a>)}
     </nav>
     <div class="header-tools">
-      <a class="icon-button" href="/search/" aria-label="搜索" title="搜索" aria-current={isCurrent('/search/') ? 'page' : undefined}><Search size={18} aria-hidden="true" /></a>
-      <button class="icon-button" id="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色"><SunMoon size={18} aria-hidden="true" /></button>
+      <a class="icon-button" href="/search/" aria-label="搜索" title="搜索" aria-current={isCurrent('/search/') ? 'page' : undefined}><Search size={20} aria-hidden="true" /></a>
+      <button class="icon-button" id="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色"><SunMoon size={20} aria-hidden="true" /></button>
     </div>
   </div>
 </header>
