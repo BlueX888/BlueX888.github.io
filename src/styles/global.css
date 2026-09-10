@@ -184,6 +184,14 @@ h3 { font-size: 1.125rem; margin: 2rem 0 .75rem; }
 .prose .footnotes h2 { font-size: .9rem; color: var(--muted); margin: 0 0 .5rem; border: 0; }
 .prose .footnotes ol { padding-left: 1.2rem; }
 .prose mark { background: var(--mark); color: inherit; }
+.prose .dashed-underline {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-color: var(--line-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: .45em;
+  text-decoration-skip-ink: none;
+}
 .prose .task-list-item { list-style: none; margin-left: -1.5rem; }
 .prose .task-list-item input { margin-right: .5rem; accent-color: var(--accent); }
 .prose .katex-display { margin: 1.75rem 0; overflow-x: auto; overflow-y: hidden; }

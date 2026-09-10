@@ -5,6 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import { SITE } from './src/site.config';
 import { obsidianLinks } from './src/plugins/obsidian-links';
 import { katexBlock, katexInline } from './src/plugins/katex';
+import { dashedUnderline } from './src/plugins/underline';
 
 export default defineConfig({
   site: SITE.url,
@@ -13,7 +14,7 @@ export default defineConfig({
   markdown: {
     processor: satteri({
       features: { wikilinks: true, math: true, gfm: { footnotes: { label: '脚注' } } },
-      mdastPlugins: [obsidianLinks, katexBlock],
+      mdastPlugins: [dashedUnderline, obsidianLinks, katexBlock],
       hastPlugins: [katexInline],
     }),
     shikiConfig: { themes: { light: 'github-light', dark: 'github-dark' } },

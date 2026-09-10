@@ -1,4 +1,4 @@
-/* 朝向自然 · 写文章 —— 括弧与波浪下划线按钮
+/* 朝向自然 · 写文章 —— 括弧与虚线下划线按钮
  *
  * Sveltia CMS 的富文本编辑器（RTE）没有“自定义工具栏按钮”的接口：
  * field_defaults.richtext.buttons 只接受预定义按钮名。
@@ -12,7 +12,6 @@
 
 'use strict';
 
-const WAVE = '\u0330';
 const PAIRS = [
   { open: '『', close: '』' },
   { open: '《', close: '》' },
@@ -26,27 +25,14 @@ const PAIRS = [
   { open: '（', close: '）' },
 ];
 
-export function addWavyUnderline(text) {
-  const clean = text.replaceAll(WAVE, '');
-  const parts =
-    typeof Intl.Segmenter === 'function'
-      ? [...new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(clean)].map(
-          ({ segment }) => segment,
-        )
-      : Array.from(clean);
-  return parts.map((part) => (/\s/u.test(part) ? part : part + WAVE)).join('');
-}
-
-// 找出页面上所有“带工具栏的富文本编辑器容器”。
+// 找出页面上所有富文本编辑器本身，避免把外层页面工具栏也算进去。
 function getWrappers() {
   const out = new Set();
-  for (const el of document.querySelectorAll('.wrapper')) {
-    const toolbar = el.querySelector('[role="toolbar"]');
-    const hasEditor =
-      el.querySelector('[contenteditable="true"]') ||
-      el.querySelector('.ProseMirror') ||
-      el.querySelector('textarea');
-    if (toolbar && hasEditor) out.add(el);
+  for (const editor of document.querySelectorAll(
+    '[contenteditable="true"], .ProseMirror, textarea',
+  )) {
+    const wrapper = editor.closest('.text-editor') ?? editor.closest('.wrapper');
+    if (wrapper?.querySelector('[role="toolbar"]')) out.add(wrapper);
   }
   return [...out];
 }
@@ -110,12 +96,12 @@ function createButton(label, title) {
 }
 
 function createWaveButton(wrapper) {
-  const button = createButton('', '给选中的文字加波浪下划线');
+  const button = createButton('', '给选中的文字加虚线下划线');
   const icon = document.createElement('span');
   icon.textContent = 'U';
-  icon.setAttribute('data-wave-icon', 'true');
+  icon.setAttribute('data-underline-icon', 'true');
   button.appendChild(icon);
-  button.addEventListener('click', () => transformSelection(wrapper, addWavyUnderline, 0));
+  button.addEventListener('click', () => toggleUnderline(wrapper));
   return button;
 }
 
@@ -143,6 +129,22 @@ function transformSelection(wrapper, transform, caretBack) {
 
 function wrapIn(wrapper, open, close) {
   transformSelection(wrapper, (text) => open + text + close, close.length);
+}
+
+function toggleUnderline(wrapper) {
+  const rich = wrapper.querySelector('[contenteditable="true"], .ProseMirror');
+  const textarea = wrapper.querySelector('textarea');
+  if (rich && (isVisible(rich) || !textarea)) {
+    rich.focus();
+    const event = new InputEvent('beforeinput', {
+      inputType: 'formatUnderline',
+      bubbles: true,
+      cancelable: true,
+    });
+    if (rich.dispatchEvent(event)) document.execCommand('underline');
+  } else if (textarea) {
+    replaceTextareaSelection(textarea, (text) => `++${text}++`, 2);
+  }
 }
 
 function isVisible(el) {
@@ -233,14 +235,59 @@ function injectStyles() {
       box-shadow: 0 4px 12px rgb(0 0 0 / 18%);
     }
     [data-bracket-popover][hidden] { display: none; }
-    [data-wave-icon] {
+    [data-underline-icon] {
       font-weight: 600;
       text-decoration-line: underline;
-      text-decoration-style: wavy;
-      text-underline-offset: 3px;
+      text-decoration-style: dashed;
+      text-decoration-color: #8b929c;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 5px;
+    }
+    [contenteditable] .dashed-underline,
+    [contenteditable] u {
+      text-decoration-line: underline;
+      text-decoration-style: dashed;
+      text-decoration-color: #8b929c;
+      text-decoration-thickness: 1px;
+      text-underline-offset: .4em;
     }
   `;
   document.head.appendChild(style);
+}
+
+function decoratePreviews() {
+  for (const preview of document.querySelectorAll(
+    '[role="document"][aria-label="内容预览"]',
+  )) {
+    const walker = document.createTreeWalker(preview, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    let node;
+    while ((node = walker.nextNode())) {
+      if (
+        node.nodeValue?.includes('++') &&
+        !node.parentElement?.closest('code, pre, .dashed-underline')
+      ) {
+        nodes.push(node);
+      }
+    }
+
+    for (const textNode of nodes) {
+      const parts = textNode.nodeValue.split(/(\+\+[^+\n]+?\+\+)/g);
+      const fragment = document.createDocumentFragment();
+      for (const part of parts) {
+        const match = part.match(/^\+\+([^+\n]+?)\+\+$/);
+        if (!match) {
+          fragment.append(part);
+          continue;
+        }
+        const span = document.createElement('span');
+        span.className = 'dashed-underline';
+        span.textContent = match[1];
+        fragment.append(span);
+      }
+      textNode.replaceWith(fragment);
+    }
+  }
 }
 
 if (typeof document !== 'undefined') {
@@ -250,7 +297,11 @@ if (typeof document !== 'undefined') {
       closeMenus();
     }
   });
-  const observer = new MutationObserver(() => mount());
+  const observer = new MutationObserver(() => {
+    mount();
+    decoratePreviews();
+  });
   observer.observe(document.body, { childList: true, subtree: true });
   mount();
+  decoratePreviews();
 }

@@ -13,6 +13,12 @@ export const CMS_OUTPUT = new URL('../public/admin/sveltia-cms.js', import.meta.
 // Source: src/lib/services/contents/draft/save/changes.js in Sveltia CMS v0.209.0.
 const BEFORE = 'Object.entries(d).map(async([a,o])=>{let s=r?.[a]??t,c=U2';
 const AFTER = 'Object.entries(d).map(async([a,o])=>{o=sr(o);let s=r?.[a]??t,c=U2';
+const UNDERLINE_THEME_BEFORE = 'Wie={text:{italic:`italic`,strikethrough:`strikethrough`}';
+const UNDERLINE_THEME_AFTER = 'Wie={text:{italic:`italic`,strikethrough:`strikethrough`,underline:`dashed-underline`}';
+const UNDERLINE_FORMAT_BEFORE = 'Ak={format:[`strikethrough`],tag:`~~`,type:`text-format`},jk=';
+const UNDERLINE_FORMAT_AFTER = 'Ak={format:[`strikethrough`],tag:`~~`,type:`text-format`},DASHED_UNDERLINE_TRANSFORMER={format:[`underline`],tag:`++`,type:`text-format`},jk=';
+const UNDERLINE_TRANSFORMERS_BEFORE = '...r?[Sk]:[bae,Cae]],s=zx(a)';
+const UNDERLINE_TRANSFORMERS_AFTER = '...r?[Sk]:[bae,Cae,DASHED_UNDERLINE_TRANSFORMER]],s=zx(a)';
 
 // Keep Base64 additions below the request sizes that fail on this deployment.
 // Check the combined payload, including files restored from an older draft backup.
@@ -37,12 +43,22 @@ export function patchCms(source) {
     throw new Error('Unexpected Sveltia CMS bundle. Refusing to apply the save-retry patch.');
   }
   const commitStart = 'Cq=async(e,t)=>{';
-  if (source.split(BEFORE).length !== 2 || source.split(commitStart).length !== 2) {
+  const targets = [
+    BEFORE,
+    commitStart,
+    UNDERLINE_THEME_BEFORE,
+    UNDERLINE_FORMAT_BEFORE,
+    UNDERLINE_TRANSFORMERS_BEFORE,
+  ];
+  if (targets.some((target) => source.split(target).length !== 2)) {
     throw new Error('Sveltia CMS patch targets must occur exactly once.');
   }
   return source
     .replace(BEFORE, AFTER)
-    .replace(commitStart, `${commitStart}(${validateUploadSize.toString()})(e);`);
+    .replace(commitStart, `${commitStart}(${validateUploadSize.toString()})(e);`)
+    .replace(UNDERLINE_THEME_BEFORE, UNDERLINE_THEME_AFTER)
+    .replace(UNDERLINE_FORMAT_BEFORE, UNDERLINE_FORMAT_AFTER)
+    .replace(UNDERLINE_TRANSFORMERS_BEFORE, UNDERLINE_TRANSFORMERS_AFTER);
 }
 
 export async function prepareCms() {

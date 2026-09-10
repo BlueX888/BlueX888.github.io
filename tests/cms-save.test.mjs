@@ -119,6 +119,8 @@ test('the build rejects unverified bundles and serves only the patched local CMS
   const html = await readFile(new URL('../public/admin/index.html', import.meta.url), 'utf8');
   assert.match(html, /src="\/admin\/sveltia-cms\.js"/);
   assert.doesNotMatch(html, /src="https:\/\/unpkg\.com\/@sveltia\/cms/);
+  assert.match(patched, /DASHED_UNDERLINE_TRANSFORMER/);
+  assert.match(patched, /underline:`dashed-underline`/);
 });
 
 test('combined Base64 payload is checked before sending a save request', () => {
