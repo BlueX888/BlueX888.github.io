@@ -1,0 +1,21 @@
+---
+import Base from '../../layouts/Base.astro';
+import ThoughtCard from '../../components/ThoughtCard.astro';
+import { getPosts } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  return [{ params: { section: 'thoughts' } }];
+}
+const posts = await getPosts('thoughts');
+---
+<Base title="想法" description="随手写下的短句" reading>
+  <div class="page-title">
+    <p class="eyebrow">栏目 / THOUGHTS</p>
+    <h1>想法</h1>
+    <p>随手写下的短句 · 共 {posts.length} 条</p>
+  </div>
+  <ol class="thought-feed">
+    {posts.map((p) => <ThoughtCard post={p} />)}
+  </ol>
+  {posts.length === 0 && <p class="intro">这里还什么都没有。</p>}
+</Base>

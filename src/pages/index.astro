@@ -1,10 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import PostCard from '../components/PostCard.astro';
+import ThoughtCard from '../components/ThoughtCard.astro';
 import { ArrowUpRight } from '@lucide/astro';
-import { SITE } from '../site.config';
+import { SITE, THOUGHTS } from '../site.config';
 import { getPosts } from '../lib/posts';
 const posts = (await getPosts()).slice(0, SITE.recentCount);
+const thoughts = THOUGHTS.homeCount > 0 ? (await getPosts('thoughts')).slice(0, THOUGHTS.homeCount) : [];
 ---
 <Base>
   <svg class="cover-defs" aria-hidden="true" focusable="false" width="0" height="0">
@@ -23,9 +25,20 @@ const posts = (await getPosts()).slice(0, SITE.recentCount);
     </div>
     <span class="cover-imprint" aria-hidden="true">CHAORAN / JOURNAL</span>
   </section>
+  {thoughts.length > 0 && (
+    <section class="home-thoughts" aria-labelledby="thoughts-title">
+      <div class="section-heading">
+        <h2 id="thoughts-title"><span class="section-number" aria-hidden="true">01</span>最近的想法</h2>
+        <a class="text-link" href="/thoughts/">全部想法 <ArrowUpRight size={16} aria-hidden="true" /></a>
+      </div>
+      <ol class="thought-feed">
+        {thoughts.map((p) => <ThoughtCard post={p} />)}
+      </ol>
+    </section>
+  )}
   <section class="recent-posts" aria-labelledby="recent-title">
     <div class="section-heading">
-      <h2 id="recent-title"><span class="section-number" aria-hidden="true">01</span>最近</h2>
+      <h2 id="recent-title"><span class="section-number" aria-hidden="true">02</span>最近</h2>
       <a class="text-link" href="/archive/">全部文章 <ArrowUpRight size={16} aria-hidden="true" /></a>
     </div>
     <div class="cards">

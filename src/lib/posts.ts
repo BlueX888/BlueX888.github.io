@@ -21,11 +21,12 @@ export function postUrl(p: Post): string {
   return `/${p.collection}/${postSlug(p)}/`;
 }
 
-/** 日记可以没有标题，用「2026年9月8日」代替 */
+/** 标题：想法没有标题，用日期和时间代替；日记可以没有标题，用「2026年9月8日」代替 */
 export function postTitle(p: Post): string {
   if (p.data.title) return p.data.title;
-  const { year, month, day } = dateParts(p.data.date);
-  return `${year}年${Number(month)}月${Number(day)}日`;
+  const { year, month, day, hour, minute } = dateParts(p.data.date);
+  const date = `${year}年${Number(month)}月${Number(day)}日`;
+  return p.collection === 'thoughts' ? `${date} ${hour}:${minute}` : date;
 }
 
 /** 中文字数（按字符计，去掉空白与 Markdown 符号） */

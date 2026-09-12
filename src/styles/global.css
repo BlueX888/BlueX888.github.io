@@ -159,6 +159,30 @@ h3 { font-size: 1.125rem; margin: 2rem 0 .75rem; }
 .year { margin: 2.4rem 0 1rem; font-family: var(--mono); color: var(--accent); font-weight: 400; font-size: .875rem; }
 .year:first-child, section:first-of-type > .year { margin-top: 0; }
 
+/* 「想法」是一个时间轴：一条细线上串起不写标题的短帖。 */
+.thought-feed { list-style: none; margin: 0; padding: 0; position: relative; }
+.thought-feed::before { content: ''; position: absolute; top: .55rem; bottom: 1.5rem; left: 3px; width: 1px; background: var(--line); }
+.thought { position: relative; padding: 0 0 2.2rem 1.75rem; }
+.thought:last-child { padding-bottom: .5rem; }
+.thought-dot { position: absolute; left: 0; top: .62rem; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.thought-body { min-width: 0; }
+.thought-content { font-family: var(--serif); font-size: 1.0625rem; line-height: 2; overflow-wrap: anywhere; }
+.thought-content > :first-child { margin-top: 0; }
+.thought-content > :last-child { margin-bottom: 0; }
+.thought-content p { margin: 0 0 .8rem; }
+.thought-content blockquote { margin: 1rem 0; padding: .1rem 0 .1rem 1rem; border-left: 2px solid var(--accent); color: var(--muted); }
+.thought-content ul, .thought-content ol { padding-left: 1.3rem; margin: 0 0 .8rem; }
+.thought-content img { display: block; margin: 1rem 0; }
+.thought-content code { font-family: var(--mono); font-size: .85em; background: var(--code-bg); padding: .12em .35em; }
+.thought-content pre { background: var(--code-bg) !important; padding: 1rem 1.1rem; border: 1px solid var(--line); overflow-x: auto; font-size: .85rem; }
+.thought-time { margin: .55rem 0 0; display: flex; align-items: baseline; gap: .75rem; font-size: .875rem; color: var(--muted); font-family: var(--mono); }
+.thought-time a { text-decoration: none; }
+.thought-draft { font-size: .75rem; border: 1px solid var(--line-strong); padding: 0 .3rem; font-family: var(--sans); }
+.home-thoughts { margin-top: 2.6rem; }
+.thought-article { max-width: var(--max-read); }
+.thought-article .prose { margin-bottom: .5rem; }
+.thought-meta { padding-top: 1.4rem; border-top: 1px solid var(--line); }
+
 .post-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
 .post-list li { display: flex; gap: 1.5rem; align-items: baseline; padding: 1.25rem 0; border-bottom: 1px solid var(--line); }
 .post-list time { flex: 0 0 10rem; font-family: var(--mono); color: var(--muted); font-size: .875rem; white-space: nowrap; }
@@ -263,7 +287,8 @@ h3 { font-size: 1.125rem; margin: 2rem 0 .75rem; }
   .brand { gap: .6rem; }
   .brand-mark { width: 2rem; height: 2rem; }
   .header-tools { grid-column: 2; grid-row: 1; border: 0; padding: 0; }
-  .nav { grid-column: 1 / -1; grid-row: 2; justify-content: space-between; gap: .5rem; }
+  .nav { grid-column: 1 / -1; grid-row: 2; gap: .5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .nav::-webkit-scrollbar { display: none; }
   .nav a { min-height: 2.75rem; }
   h1 { font-size: 1.75rem; }
   .page-title { padding-bottom: 1.5rem; margin-bottom: 1.75rem; }
@@ -283,6 +308,9 @@ h3 { font-size: 1.125rem; margin: 2rem 0 .75rem; }
   .card-excerpt { margin-bottom: .6rem; }
   .post-list li { gap: .3rem 1rem; flex-wrap: wrap; padding: 1rem 0; }
   .post-list time { flex: 0 0 100%; }
+  .thought { padding: 0 0 1.8rem 1.5rem; }
+  .thought-content { font-size: 1rem; line-height: 1.95; }
+  .home-thoughts { margin-top: 1.75rem; }
   .list-arrow { display: none; }
   .back-link { margin-bottom: 1.2rem; }
   .article-header { margin-bottom: 1.75rem; }

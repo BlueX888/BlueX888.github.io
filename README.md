@@ -1,6 +1,6 @@
 # 朝向自然
 
-个人记录站点：读书、日记、学习、周记。用 [Astro](https://astro.build) 生成静态页面，内容用 Markdown 写在 `content/` 里，推送到 GitHub 后自动部署到 GitHub Pages。
+个人记录站点：想法、日记、学习、周记、读书。用 [Astro](https://astro.build) 生成静态页面，内容用 Markdown 写在 `content/` 里，推送到 GitHub 后自动部署到 GitHub Pages。
 
 ## 在网页上写（推荐）
 
@@ -12,7 +12,9 @@
 2. 弹窗里有个链接，点它会跳到 GitHub 生成令牌的页面（权限已经预选好），名字随便填，过期时间选 **No expiration**，点 **Generate token**
 3. 把生成的那串令牌复制回弹窗，确定。以后打开这个网址就直接进后台，不用再登录
 
-写文章：左侧是「日记 / 周记 / 学习 / 读书 / 页面」，点右上角 **+** 新建。正文上方有一排按钮：段落样式（标题、列表、引用、代码块）、**加粗**、*斜体*、删除线、代码、链接、图片；最右边可以切换到 Markdown 源码。图片会自动存到 `content/attachments/`。
+写文章：左侧是「想法 / 日记 / 周记 / 学习 / 读书 / 页面」，点右上角 **+** 新建。正文上方有一排按钮：段落样式（标题、列表、引用、代码块）、**加粗**、*斜体*、删除线、代码、链接、图片；最右边可以切换到 Markdown 源码。图片会自动存到 `content/attachments/`。
+
+「想法」栏目不用写标题：点 **+**、敲一两句话、关掉草稿、保存，就是一条短帖。网址按发布时刻生成（如 `/thoughts/2026-09-12-2140/`），首页会显示最近几条，栏目页 `/thoughts/` 是一条时间轴。
 
 保存与发布：**草稿**开关默认打开，此时点 **保存** 只是存到仓库，线上看不到；写完把开关关掉再点 **保存**，一两分钟后自动上线。
 
@@ -38,6 +40,7 @@
 
 ```
 content/
+├── thoughts/    想法      -> /thoughts/2026-09-12-2140/
 ├── reading/      读书      -> /reading/文件名/
 ├── diary/        日记      -> /diary/文件名/
 ├── learning/     学习      -> /learning/文件名/
@@ -50,6 +53,7 @@ content/
 新建文章可以在 Obsidian 里直接建文件，也可以用命令：
 
 ```bash
+pnpm new thoughts      # 此刻的想法 content/thoughts/2026-09-12-2140.md
 pnpm new reading 一本书的名字
 pnpm new learning 学习主题
 pnpm new diary          # 今天的日记 content/diary/2026-09-08.md
@@ -60,7 +64,7 @@ pnpm new weekly         # 本周周记 content/weekly/2026-W37.md
 
 ```yaml
 ---
-title: 标题            # 日记可以不写，会显示成「2026年9月8日」
+title: 标题            # 想法不写标题；日记可以不写，会显示成「2026年9月8日」
 date: 2026-09-08T14:30:00+08:00     # 必填，包含时分和时区
 updated: 2026-09-10T16:00:00+08:00  # 可选
 description: 一句话摘要  # 可选，用于列表、RSS 和搜索引擎
@@ -103,6 +107,7 @@ pnpm check      # 类型检查
 
 - `SITE`：站名、简介、线上地址
 - `SECTIONS`：栏目名称与说明（要新增栏目，还需在 `src/content.config.ts` 加一行并建对应文件夹）
+- `THOUGHTS.homeCount`：「想法」在首页显示几条，改成 0 就不显示这个板块
 - `WALINE`：评论。游客不用登录就能匿名留言，服务端免费部署在 Vercel 上，步骤见下面「评论」一节
 - `ANALYTICS`：访问统计，Umami 或 Cloudflare Web Analytics 任选，都留空则不加载统计脚本
 

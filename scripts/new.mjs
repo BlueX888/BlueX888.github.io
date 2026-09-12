@@ -5,12 +5,13 @@
  *   pnpm new learning 学习主题          -> content/learning/学习主题.md
  *   pnpm new diary                     -> content/diary/2026-09-08.md（今天）
  *   pnpm new weekly                    -> content/weekly/2026-W37.md（本周）
+ *   pnpm new thoughts                  -> content/thoughts/2026-09-08-1430.md（此刻，不写标题）
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const [section, ...rest] = process.argv.slice(2);
-const SECTIONS = ['reading', 'diary', 'learning', 'weekly'];
+const SECTIONS = ['thoughts', 'reading', 'diary', 'learning', 'weekly'];
 if (!SECTIONS.includes(section)) {
   console.error(`用法: pnpm new <${SECTIONS.join('|')}> [标题]`);
   process.exit(1);
@@ -34,6 +35,12 @@ let template;
 if (section === 'diary') {
   filename = title ? `${today}-${title}` : today;
   template = 'diary';
+} else if (section === 'thoughts') {
+  // 不写标题，文件名就是发布时刻；同一分钟再发一条时自动加 -2、-3
+  const dir = join('content', 'thoughts');
+  filename = `${today}-${pad(now.getHours())}${pad(now.getMinutes())}`;
+  for (let n = 2; existsSync(join(dir, `${filename}.md`)); n += 1) filename = `${filename}-${n}`;
+  template = 'thought';
 } else if (section === 'weekly') {
   const { year, week } = isoWeek(now);
   filename = `${year}-W${pad(week)}`;

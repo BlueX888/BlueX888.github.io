@@ -40,6 +40,25 @@ field_defaults:
     use_markdown_shortcuts: true
 
 collections:
+  - name: thoughts
+    label: 想法
+    label_singular: 想法
+    icon: bolt
+    folder: content/thoughts
+    create: true
+    extension: md
+    format: yaml-frontmatter
+    slug: "{{year}}-{{month}}-{{day}}-{{hour}}{{minute}}"
+    identifier_field: date
+    summary: "{{date}}　{{body | truncate(30)}}"
+    sortable_fields:
+      fields: [date]
+      default: { field: date, direction: descending }
+    fields:
+      - { name: date, label: 发布时间, widget: datetime, type: datetime-local, input_timezone: Asia/Shanghai, output_utc: false, format: "YYYY-MM-DDTHH:mm:ssZ", default: "{{now}}" }
+      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示；写完后关掉再点「保存」就是发布上线" }
+      - { name: body, label: 正文, widget: richtext, required: false, hint: 一两句话即可，不用写标题；这里写下的就是读者看到的全部内容 }
+
   - name: diary
     label: 日记
     label_singular: 日记

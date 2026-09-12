@@ -33,8 +33,9 @@ const pages = defineCollection({
   schema: z.object({ title: z.string() }),
 });
 
-// 四个栏目要逐个写出来，Astro 才能为每个集合生成精确的类型
+// 五个栏目要逐个写出来，Astro 才能为每个集合生成精确的类型
 export const collections = {
+  thoughts: section('thoughts'),
   reading: section('reading'),
   diary: section('diary'),
   learning: section('learning'),

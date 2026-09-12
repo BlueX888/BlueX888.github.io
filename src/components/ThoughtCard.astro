@@ -1,0 +1,19 @@
+---
+import { render } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+import { postTitle, postUrl, type Post } from '../lib/posts';
+
+interface Props { post: Post }
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+<li class="thought" data-pagefind-ignore>
+  <span class="thought-dot" aria-hidden="true"></span>
+  <div class="thought-body">
+    <div class="thought-content"><Content /></div>
+    <p class="thought-time">
+      <a href={postUrl(post)} aria-label={`这条想法的链接：${postTitle(post)}`}><FormattedDate date={post.data.date} withYear /></a>
+      {post.data.draft && <span class="thought-draft">草稿</span>}
+    </p>
+  </div>
+</li>

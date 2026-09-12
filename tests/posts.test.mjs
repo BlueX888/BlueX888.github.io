@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { cp, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { cp, mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -21,14 +21,14 @@ runInNewContext(compiled, {
   exports: posts,
   require: (id) => {
     if (id === 'astro:content') return { getCollection: async (key) => entries.filter((p) => p.collection === key) };
-    if (id === '../site.config') return { SECTION_KEYS: ['reading', 'diary', 'learning', 'weekly'] };
+    if (id === '../site.config') return { SECTION_KEYS: ['thoughts', 'reading', 'diary', 'learning', 'weekly'] };
     if (id === './dates') return { dateParts };
     return require(id);
   },
 });
 
 test('empty custom slugs fall back to the filename in every collection', () => {
-  for (const collection of ['reading', 'diary', 'learning', 'weekly']) {
+  for (const collection of ['thoughts', 'reading', 'diary', 'learning', 'weekly']) {
     for (const slug of [undefined, '', '   ']) {
       assert.equal(posts.postUrl({ collection, id: '2026-09-10-1436', data: { slug } }),
         `/${collection}/2026-09-10-1436/`);
@@ -100,5 +100,22 @@ test('the legacy editor preserves both date-only values and offset timestamps', 
     }
     assert.doesNotMatch('2026-09-10T15:09', pattern);
     assert.doesNotMatch('not-a-date', pattern);
+  }
+});
+
+test('thoughts keep time in the fallback title while other sections stay date-only', () => {
+  const date = new Date('2026-09-12T13:40:00Z');
+  assert.equal(posts.postTitle({ collection: 'thoughts', data: { date } }), '2026年9月12日 21:40');
+  assert.equal(posts.postTitle({ collection: 'diary', data: { date } }), '2026年9月12日');
+  assert.equal(posts.postTitle({ collection: 'thoughts', data: { date, title: '手写的标题' } }), '手写的标题');
+});
+
+test('the thought timeline renders every entry on its own page', async () => {
+  const files = await readdir(new URL('../content/thoughts', import.meta.url));
+  for (const name of files.filter((f) => f.endsWith('.md'))) {
+    const data = yaml((await readFile(new URL(`../content/thoughts/${name}`, import.meta.url), 'utf8')).split('---')[1]);
+    assert.match(name, /^\d{4}-\d{2}-\d{2}-\d{4}(-\d+)?\.md$/, `${name} 应以发布时刻命名`);
+    assert.equal(data.title, undefined, `${name} 不该有标题`);
+    assert.ok(data.date, `${name} 缺少 date`);
   }
 });

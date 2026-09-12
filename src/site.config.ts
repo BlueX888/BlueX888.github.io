@@ -15,12 +15,21 @@ export const SITE = {
   recentCount: 6,
 } as const;
 
-/** 四个栏目。key 同时是 URL 路径和 content/ 下的文件夹名。 */
+/** 五个栏目。key 同时是 URL 路径和 content/ 下的文件夹名。 */
 export const SECTIONS = {
+  thoughts: { name: '想法', description: '随手写下的短句' },
   diary: { name: '日记', description: '某一天的自己' },
   weekly: { name: '周记', description: '每周反思' },
   learning: { name: '学习', description: '学习记录' },
   reading: { name: '读书', description: '读书笔记与感悟' },
+} as const;
+
+/**
+ * 「想法」栏目：不写标题的短帖，发出来就是一个时间戳网址。
+ * 首页「最近的想法」显示几条；不想要这个板块时把 homeCount 改成 0。
+ */
+export const THOUGHTS = {
+  homeCount: 3,
 } as const;
 
 export type SectionKey = keyof typeof SECTIONS;

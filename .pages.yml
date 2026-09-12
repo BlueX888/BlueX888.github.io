@@ -19,6 +19,24 @@ settings:
       rename: "重命名：{oldFilename} -> {newFilename}"
 
 content:
+  - name: thoughts
+    label: 想法
+    type: collection
+    path: content/thoughts
+    filename:
+      template: "{year}-{month}-{day}-{hour}{minute}.md"
+      field: create
+    view:
+      fields: [date, draft]
+      primary: date
+      sort: [date]
+      search: [body]
+      default: { sort: date, order: desc }
+    fields:
+      - { name: date, label: 发布时间, type: string, required: true, description: "如 2026-09-10T15:09:00+08:00", pattern: "^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?(Z|[+-]\\d{2}:\\d{2}))?$" }
+      - { name: draft, label: 草稿, type: boolean, default: true, description: "打开＝只保存、线上不显示（相当于存草稿）；写完后关掉再点 Save 就是发布上线" }
+      - { name: body, label: 正文, type: rich-text, description: "一两句话即可，不用写标题；这里写下的就是读者看到的全部内容", options: { format: markdown, media: true } }
+
   - name: reading
     label: 读书
     type: collection
