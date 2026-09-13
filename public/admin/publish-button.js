@@ -9,13 +9,16 @@
  *
  * 只用两个 Sveltia CMS 自己渲染出来的稳定属性，不依赖任何私有 API：
  *   - 草稿字段容器：[data-key-path="draft"]（Sveltia 给每个字段都加了 data-key-path）
- *   - 保存按钮：带 aria-keyshortcuts="Accel+S"（Sveltia 给保存按钮绑的快捷键）
+ *   - 保存按钮：绑了「保存」快捷键的那个按钮
+ * 注意快捷键属性里写的是实际按键，不是配置时的 Accel：Mac 上是 Meta+S，
+ * Windows / Linux 上是 Control+S，所以这里三种都认。
  * 点开关和点保存都是真实的 click，走 CMS 自己的逻辑，内部状态不会脱节。
  */
 
 'use strict';
 
-const SAVE_BUTTON = 'button[aria-keyshortcuts="Accel+S"]';
+const SAVE_BUTTON =
+  'button[aria-keyshortcuts="Meta+S"], button[aria-keyshortcuts="Control+S"], button[aria-keyshortcuts="Accel+S"]';
 const DRAFT_SWITCH = '[data-key-path="draft"] button[role="switch"]';
 // 保存成功后 Sveltia 会弹一个绿色提示条，用它判断是否真的保存成功了。
 const SUCCESS_TOAST = '.sui.toast:not([aria-hidden="true"]) .sui.alert.success';
