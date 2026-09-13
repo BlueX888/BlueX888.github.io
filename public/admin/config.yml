@@ -56,7 +56,7 @@ collections:
       default: { field: date, direction: descending }
     fields:
       - { name: date, label: 发布时间, widget: datetime, type: datetime-local, input_timezone: Asia/Shanghai, output_utc: false, format: "YYYY-MM-DDTHH:mm:ssZ", default: "{{now}}" }
-      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示；写完后关掉再点「保存」就是发布上线" }
+      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示。想让它出现在网站上，直接点右上角绿色的「发布上线」，这个开关不用自己管" }
       - { name: body, label: 正文, widget: richtext, required: false, hint: 一两句话即可，不用写标题；这里写下的就是读者看到的全部内容 }
 
   - name: diary
@@ -76,7 +76,7 @@ collections:
     fields:
       - { name: date, label: 发布时间, widget: datetime, type: datetime-local, input_timezone: Asia/Shanghai, output_utc: false, format: "YYYY-MM-DDTHH:mm:ssZ", default: "{{now}}" }
       - { name: title, label: 标题, widget: string, required: false, hint: 可不填，网页上会显示成「2026年9月8日」 }
-      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示；写完后关掉再点「保存」就是发布上线" }
+      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示。想让它出现在网站上，直接点右上角绿色的「发布上线」，这个开关不用自己管" }
       - { name: body, label: 正文, widget: richtext, required: false }
 
   - name: weekly
@@ -95,7 +95,7 @@ collections:
     fields:
       - { name: title, label: 标题, widget: string, hint: 例如「2026 年第 37 周」 }
       - { name: date, label: 发布时间, widget: datetime, type: datetime-local, input_timezone: Asia/Shanghai, output_utc: false, format: "YYYY-MM-DDTHH:mm:ssZ", default: "{{now}}" }
-      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示；写完后关掉再点「保存」就是发布上线" }
+      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示。想让它出现在网站上，直接点右上角绿色的「发布上线」，这个开关不用自己管" }
       - { name: body, label: 正文, widget: richtext, required: false }
 
   - name: learning
@@ -115,7 +115,7 @@ collections:
       - { name: title, label: 标题, widget: string }
       - { name: date, label: 发布时间, widget: datetime, type: datetime-local, input_timezone: Asia/Shanghai, output_utc: false, format: "YYYY-MM-DDTHH:mm:ssZ", default: "{{now}}" }
       - { name: description, label: 一句话摘要, widget: text, required: false, hint: 用于列表、RSS 和搜索引擎，可不填 }
-      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示；写完后关掉再点「保存」就是发布上线" }
+      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示。想让它出现在网站上，直接点右上角绿色的「发布上线」，这个开关不用自己管" }
       - { name: slug, label: 网址后缀, widget: string, required: false, hint: "可不填。填英文，如 python-basics，网址就是 /learning/python-basics/", pattern: ["^[a-z0-9-]*$", "只能用小写英文字母、数字和短横线"] }
       - { name: body, label: 正文, widget: richtext, required: false }
 
@@ -136,7 +136,7 @@ collections:
       - { name: title, label: 标题, widget: string }
       - { name: date, label: 发布时间, widget: datetime, type: datetime-local, input_timezone: Asia/Shanghai, output_utc: false, format: "YYYY-MM-DDTHH:mm:ssZ", default: "{{now}}" }
       - { name: description, label: 一句话摘要, widget: text, required: false, hint: 用于列表、RSS 和搜索引擎，可不填 }
-      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示；写完后关掉再点「保存」就是发布上线" }
+      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示。想让它出现在网站上，直接点右上角绿色的「发布上线」，这个开关不用自己管" }
       - { name: slug, label: 网址后缀, widget: string, required: false, hint: "可不填。填英文，如 sapiens，网址就是 /reading/sapiens/", pattern: ["^[a-z0-9-]*$", "只能用小写英文字母、数字和短横线"] }
       - { name: body, label: 正文, widget: richtext, required: false }
 
