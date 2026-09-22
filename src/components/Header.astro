@@ -1,9 +1,10 @@
 ---
-import { SITE, SECTIONS } from '../site.config';
+import { SITE, SECTIONS, CHECKIN } from '../site.config';
 import { Search, SunMoon } from '@lucide/astro';
 const path = Astro.url.pathname;
 const items = [
   ...Object.entries(SECTIONS).map(([key, s]) => ({ href: `/${key}/`, label: s.name })),
+  { href: '/checkin/', label: CHECKIN.name },
   { href: '/archive/', label: '归档' },
   { href: '/about/', label: '关于' },
 ];

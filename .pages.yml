@@ -19,6 +19,37 @@ settings:
       rename: "重命名：{oldFilename} -> {newFilename}"
 
 content:
+  - name: checkin
+    label: 打卡
+    type: collection
+    path: content/checkin
+    filename:
+      template: "{year}-{month}-{day}.md"
+      field: create
+    view:
+      fields: [date, draft]
+      primary: date
+      sort: [date]
+      default: { sort: date, order: desc }
+    fields:
+      - { name: date, label: 日期, type: string, required: true, description: "如 2026-09-22T07:30:00+08:00", pattern: "^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?(Z|[+-]\\d{2}:\\d{2}))?$" }
+      # Pages CMS 没有「列表」这个字段类型：可增删的条目要写成 type: object 加 list 修饰符。
+      # 它的列表项不支持默认值，所以这里不再复制习惯清单（每天新建时要自己点
+      # 「Add an item」把习惯名打一遍）。日常打卡请用 /admin/，那边清单已经列好了。
+      - name: habits
+        label: 今日打卡
+        type: object
+        list:
+          collapsible:
+            collapsed: false
+            summary: "{name}"
+        description: 做完的把「已完成」打开；想加新的坚持项就点「Add an item」加一条
+        fields:
+          - { name: name, label: 习惯, type: string, required: true }
+          - { name: done, label: 已完成, type: boolean, default: false }
+      - { name: draft, label: 草稿, type: boolean, default: true, description: "打开＝只保存、线上不显示（相当于存草稿）；写完后关掉再点 Save 就是发布上线" }
+      - { name: body, label: 备注, type: rich-text, description: 可留空；写下的内容会显示在打卡页当天的记录里, options: { format: markdown, media: true } }
+
   - name: thoughts
     label: 想法
     type: collection

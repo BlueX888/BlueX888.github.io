@@ -1,0 +1,140 @@
+---
+import Base from '../../layouts/Base.astro';
+import { CircleCheck, Circle, ArrowUpRight } from '@lucide/astro';
+import { CHECKIN } from '../../site.config';
+import {
+  getCheckins,
+  buildDayMap,
+  todayKey,
+  dayKey,
+  dayLabel,
+  todayList,
+  progressOf,
+  habitNames,
+  streakOf,
+  habitStats,
+  heatmap,
+  heatSummary,
+} from '../../lib/checkin';
+
+const checkins = await getCheckins();
+const dayMap = buildDayMap(checkins);
+const today = todayKey();
+const todayProgress = progressOf(dayMap.get(today));
+const list = todayList(dayMap, today);
+const stats = habitNames(dayMap).map((name) => ({
+  name,
+  streak: streakOf(dayMap, name, today),
+  ...habitStats(dayMap, name, today),
+}));
+const { cells, monthLabels } = heatmap(dayMap, { weeks: CHECKIN.weeks, end: today });
+const summary = heatSummary(cells);
+const recent = checkins.slice(0, CHECKIN.recentCount);
+const note = (body = '') => body.replace(/\s+/g, ' ').trim().slice(0, 80);
+---
+<Base title={CHECKIN.name} description={CHECKIN.description}>
+  <div class="page-title">
+    <p class="eyebrow">CHECKIN / 每日打卡</p>
+    <h1>{CHECKIN.name}</h1>
+    <p>{CHECKIN.description} · 已记录 {checkins.length} 天</p>
+  </div>
+
+  <section aria-labelledby="checkin-today">
+    <div class="section-heading">
+      <h2 id="checkin-today"><span class="section-number" aria-hidden="true">01</span>{dayLabel(today)}</h2>
+      <span class="checkin-total">
+        {todayProgress.total > 0 ? `已完成 ${todayProgress.done} / ${todayProgress.total}` : '今天还没打卡'}
+      </span>
+    </div>
+    <ul class="checkin-today">
+      {list.map((item) => (
+        <li data-done={String(item.done)}>
+          <span class="checkin-mark" aria-hidden="true">
+            {item.done ? <CircleCheck size={19} /> : <Circle size={19} />}
+          </span>
+          <span class="checkin-name">{item.name}</span>
+          <span class="checkin-count">{item.done ? '已做' : '未做'}</span>
+        </li>
+      ))}
+    </ul>
+    {checkins.length === 0 && (
+      <p class="intro">
+        还没有打卡记录。在<a href="/admin/#/collections/checkin">后台</a>新建一条，或在本机运行 <code>pnpm new checkin</code>。
+      </p>
+    )}
+  </section>
+
+  {checkins.length > 0 && (
+    <>
+      <section aria-labelledby="checkin-streak">
+        <div class="section-heading">
+          <h2 id="checkin-streak"><span class="section-number" aria-hidden="true">02</span>坚持情况</h2>
+          <span class="checkin-total">近 {CHECKIN.windowDays} 天</span>
+        </div>
+        <ul class="checkin-stats">
+          {stats.map((habit) => (
+            <li>
+              <span class="checkin-name">{habit.name}</span>
+              <span class="checkin-stat">连续 <b>{habit.streak}</b> 天</span>
+              <span class="checkin-stat">
+                {habit.recorded > 0 ? <>近 {CHECKIN.windowDays} 天 <b>{habit.done}</b>/{habit.recorded}</> : '暂无记录'}
+              </span>
+              <span class="checkin-stat">累计 <b>{habit.total}</b> 天</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section aria-labelledby="checkin-heatmap">
+        <div class="section-heading">
+          <h2 id="checkin-heatmap"><span class="section-number" aria-hidden="true">03</span>最近 {CHECKIN.weeks} 周</h2>
+          <span class="checkin-total">有记录 {summary.recorded} 天 · 全打满 {summary.full} 天</span>
+        </div>
+        <div
+          class="heatmap"
+          role="img"
+          aria-label={`最近 ${CHECKIN.weeks} 周的打卡日历：有记录 ${summary.recorded} 天，其中 ${summary.full} 天全部完成`}
+        >
+          <div class="heatmap-months" aria-hidden="true">
+            {monthLabels.map((month) => <span style={`grid-column: span ${month.span}`}>{month.label}</span>)}
+          </div>
+          <div class="heatmap-grid" aria-hidden="true">
+            {cells.map((cell) => (
+              <span class="heat-cell" data-level={cell.level} data-future={String(cell.future)} title={cell.label} />
+            ))}
+          </div>
+        </div>
+        <p class="heatmap-legend" aria-hidden="true">
+          <span>少</span>
+          {[0, 1, 2, 3, 4].map((level) => <span class="heat-cell" data-level={level} />)}
+          <span>多</span>
+        </p>
+      </section>
+
+      <section aria-labelledby="checkin-recent">
+        <div class="section-heading">
+          <h2 id="checkin-recent"><span class="section-number" aria-hidden="true">04</span>最近记录</h2>
+          <a class="text-link" href="/admin/#/collections/checkin">去打卡 <ArrowUpRight size={16} aria-hidden="true" /></a>
+        </div>
+        <ul class="post-list">
+          {recent.map((entry) => {
+            const key = dayKey(entry.data.date);
+            const progress = progressOf(dayMap.get(key));
+            const done = entry.data.habits.filter((habit) => habit.done).map((habit) => habit.name);
+            const body = note(entry.body);
+            return (
+              <li>
+                <time datetime={key}>{key}</time>
+                <span class="post-list-title">
+                  {done.length > 0 ? done.join(' · ') : '没有打勾的项目'}
+                  {body && <span class="checkin-note">{body}</span>}
+                </span>
+                <span class="section-tag">{progress.done}/{progress.total}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    </>
+  )}
+</Base>

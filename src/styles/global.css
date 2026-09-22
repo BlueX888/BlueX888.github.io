@@ -191,6 +191,36 @@ h3 { font-size: 1.125rem; margin: 2rem 0 .75rem; }
 .post-list .section-tag { color: var(--muted); font-size: .875rem; flex-shrink: 0; }
 .list-arrow { color: var(--muted); align-self: center; }
 
+/* 每日打卡：今日清单、连续天数、温度图式的日历。颜色全部来自现有变量，深浅色自动跟着走。 */
+.checkin-total { font-family: var(--mono); font-size: .875rem; color: var(--muted); }
+.checkin-today { list-style: none; margin: 0 0 2.5rem; padding: 0; border-top: 1px solid var(--line); }
+.checkin-today li { display: flex; align-items: center; gap: .75rem; padding: .8rem 0; border-bottom: 1px solid var(--line); }
+.checkin-mark { display: inline-flex; color: var(--line-strong); }
+.checkin-today li[data-done='true'] .checkin-mark { color: var(--accent); }
+.checkin-today li[data-done='false'] .checkin-name { color: var(--muted); }
+.checkin-today .checkin-name { flex: 1; min-width: 0; }
+.checkin-count { font-family: var(--mono); font-size: .8125rem; color: var(--muted); }
+
+.checkin-stats { list-style: none; margin: 0 0 2.5rem; padding: 0; border-top: 1px solid var(--line); }
+.checkin-stats li { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem 1.25rem; padding: .85rem 0; border-bottom: 1px solid var(--line); }
+.checkin-name { font-family: var(--serif); font-size: 1.0625rem; overflow-wrap: anywhere; }
+.checkin-stat { font-family: var(--mono); font-size: .875rem; color: var(--muted); white-space: nowrap; }
+.checkin-stat b { font-weight: 400; color: var(--fg); }
+
+.heatmap { overflow-x: auto; padding-bottom: .5rem; }
+.heatmap-months { display: grid; grid-auto-flow: column; grid-auto-columns: 14px; gap: 3px; margin-bottom: .35rem; font-family: var(--mono); font-size: .75rem; color: var(--muted); white-space: nowrap; }
+.heatmap-grid { display: grid; grid-template-rows: repeat(7, 14px); grid-auto-flow: column; grid-auto-columns: 14px; gap: 3px; }
+.heat-cell { width: 14px; height: 14px; border-radius: 2px; background: var(--line); }
+.heat-cell[data-level='0'] { background: transparent; box-shadow: inset 0 0 0 1px var(--line); }
+.heat-cell[data-level='1'] { background: color-mix(in srgb, var(--accent) 25%, transparent); }
+.heat-cell[data-level='2'] { background: color-mix(in srgb, var(--accent) 50%, transparent); }
+.heat-cell[data-level='3'] { background: color-mix(in srgb, var(--accent) 75%, transparent); }
+.heat-cell[data-level='4'] { background: var(--accent); }
+.heat-cell[data-future='true'] { background: transparent; box-shadow: none; }
+.heatmap-legend { display: flex; align-items: center; justify-content: flex-end; gap: .35rem; margin: .75rem 0 0; font-size: .75rem; color: var(--muted); }
+.heatmap-legend .heat-cell { width: 11px; height: 11px; }
+.checkin-note { display: block; margin-top: .35rem; font-family: var(--sans); font-size: .9375rem; color: var(--muted); }
+
 /* The reading measure is independent of the wider index grid. */
 .back-link { display: inline-flex; align-items: center; gap: .6rem; margin-bottom: 1.75rem; min-height: 2.75rem; color: var(--accent); text-decoration: none; font-size: .875rem; }
 .article-header { padding-bottom: 1.6rem; margin-bottom: 2.5rem; border-bottom: 1px solid var(--line-strong); }
@@ -308,6 +338,9 @@ h3 { font-size: 1.125rem; margin: 2rem 0 .75rem; }
   .card-excerpt { margin-bottom: .6rem; }
   .post-list li { gap: .3rem 1rem; flex-wrap: wrap; padding: 1rem 0; }
   .post-list time { flex: 0 0 100%; }
+  .checkin-stats li { gap: .15rem .9rem; }
+  .checkin-stat { font-size: .8125rem; }
+  .checkin-today li { gap: .6rem; }
   .thought { padding: 0 0 1.8rem 1.5rem; }
   .thought-content { font-size: 1rem; line-height: 1.95; }
   .home-thoughts { margin-top: 1.75rem; }

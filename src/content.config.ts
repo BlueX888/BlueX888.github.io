@@ -28,6 +28,26 @@ function section(key: string) {
   });
 }
 
+/**
+ * 每日打卡。一天一个文件，frontmatter 里记当天每项习惯有没有做。
+ * 日期字段和其它栏目保持一致，好让页面统一按北京时间算「是哪一天」。
+ */
+const checkin = defineCollection({
+  loader: glob({
+    pattern: ['**/*.md', '!**/_*', '!**/_*/**'],
+    base: './content/checkin',
+    generateId: ({ entry }) => entryIdFromPath(entry),
+  }),
+  schema: z.object({
+    date: z.coerce.date(),
+    draft: z.boolean().default(false),
+    /** 当天每项习惯的完成情况；不写就是空数组 */
+    habits: z
+      .array(z.object({ name: z.string().trim().min(1), done: z.boolean().default(false) }))
+      .default([]),
+  }),
+});
+
 const pages = defineCollection({
   loader: glob({ pattern: '*.md', base: './content/pages', generateId: ({ entry }) => entryIdFromPath(entry) }),
   schema: z.object({ title: z.string() }),
@@ -41,4 +61,5 @@ export const collections = {
   learning: section('learning'),
   weekly: section('weekly'),
   pages,
+  checkin,
 };

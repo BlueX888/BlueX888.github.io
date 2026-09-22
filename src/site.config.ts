@@ -56,3 +56,20 @@ export const ANALYTICS = {
   umami: { src: '', websiteId: '' },
   cloudflareToken: '',
 };
+
+/**
+ * 每日打卡。固定清单改这里之后，记得同步这三处：
+ * content/_templates/checkin.md、public/admin/config.yml、.pages.yml
+ * （tests/checkin.test.mjs 会检查它们是否一致）
+ */
+export const CHECKIN = {
+  name: '打卡',
+  description: '每天坚持的小事',
+  habits: ['早起', '读书 30 分钟', '运动', '写作'],
+  /** 热力图显示最近多少周 */
+  weeks: 16,
+  /** 页面下方「最近记录」显示几条 */
+  recentCount: 14,
+  /** 连续天数 / 完成率的统计窗口（天） */
+  windowDays: 30,
+} as const;

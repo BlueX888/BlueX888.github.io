@@ -6,12 +6,13 @@
  *   pnpm new diary                     -> content/diary/2026-09-08.md（今天）
  *   pnpm new weekly                    -> content/weekly/2026-W37.md（本周）
  *   pnpm new thoughts                  -> content/thoughts/2026-09-08-1430.md（此刻，不写标题）
+ *   pnpm new checkin                   -> content/checkin/2026-09-08.md（今天，习惯清单已列好）
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const [section, ...rest] = process.argv.slice(2);
-const SECTIONS = ['thoughts', 'reading', 'diary', 'learning', 'weekly'];
+const SECTIONS = ['thoughts', 'reading', 'diary', 'learning', 'weekly', 'checkin'];
 if (!SECTIONS.includes(section)) {
   console.error(`用法: pnpm new <${SECTIONS.join('|')}> [标题]`);
   process.exit(1);
@@ -41,6 +42,16 @@ if (section === 'diary') {
   filename = `${today}-${pad(now.getHours())}${pad(now.getMinutes())}`;
   for (let n = 2; existsSync(join(dir, `${filename}.md`)); n += 1) filename = `${filename}-${n}`;
   template = 'thought';
+} else if (section === 'checkin') {
+  // 「今天」按北京时间算，和 src/lib/dates.ts 的口径一致；文件名就是页面上那一天。
+  // 本地时区和北京时间不同的机器上，这样才不会把记录写到前一天。
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' })
+      .formatToParts(now)
+      .map(({ type, value }) => [type, value]),
+  );
+  filename = `${parts.year}-${parts.month}-${parts.day}`;
+  template = 'checkin';
 } else if (section === 'weekly') {
   const { year, week } = isoWeek(now);
   filename = `${year}-W${pad(week)}`;

@@ -40,6 +40,39 @@ field_defaults:
     use_markdown_shortcuts: true
 
 collections:
+  - name: checkin
+    label: 打卡
+    label_singular: 打卡
+    icon: checklist
+    folder: content/checkin
+    create: true
+    extension: md
+    format: yaml-frontmatter
+    slug: "{{year}}-{{month}}-{{day}}"
+    identifier_field: date
+    summary: "{{date}}"
+    sortable_fields:
+      fields: [date]
+      default: { field: date, direction: descending }
+    fields:
+      - { name: date, label: 日期, widget: datetime, type: datetime-local, input_timezone: Asia/Shanghai, output_utc: false, format: "YYYY-MM-DDTHH:mm:ssZ", default: "{{now}}" }
+      - name: habits
+        label: 今日打卡
+        widget: list
+        label_singular: 习惯
+        summary: "{{fields.name}}"
+        hint: 做完的把「已完成」打开。想加新的坚持项就点「+ 习惯」，想删就点右边的垃圾桶
+        default:
+          - { name: 早起, done: false }
+          - { name: 读书 30 分钟, done: false }
+          - { name: 运动, done: false }
+          - { name: 写作, done: false }
+        fields:
+          - { name: name, label: 习惯, widget: string, required: true }
+          - { name: done, label: 已完成, widget: boolean, default: false }
+      - { name: draft, label: 草稿, widget: boolean, default: true, required: false, hint: "打开＝只保存、线上不显示。想让它出现在网站上，直接点右上角绿色的「发布上线」，这个开关不用自己管" }
+      - { name: body, label: 备注, widget: richtext, required: false, hint: 可留空；写下的内容会显示在打卡页当天的记录里 }
+
   - name: thoughts
     label: 想法
     label_singular: 想法
