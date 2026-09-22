@@ -28,6 +28,9 @@ const stats = habitNames(dayMap).map((name) => ({
   ...habitStats(dayMap, name, today),
 }));
 const { cells, monthLabels } = heatmap(dayMap, { weeks: CHECKIN.weeks, end: today });
+// 一年的格子比正文宽，手机上靠横向滑动；滚动量也决定了月份标签能不能左右贴边对齐。
+const gridWidth = CHECKIN.weeks * 17 - 3;
+const maxScroll = Math.max(0, gridWidth - 688);
 const summary = heatSummary(cells);
 const recent = checkins.slice(0, CHECKIN.recentCount);
 const note = (body = '') => body.replace(/\s+/g, ' ').trim().slice(0, 80);
@@ -87,16 +90,20 @@ const note = (body = '') => body.replace(/\s+/g, ' ').trim().slice(0, 80);
 
       <section aria-labelledby="checkin-heatmap">
         <div class="section-heading">
-          <h2 id="checkin-heatmap"><span class="section-number" aria-hidden="true">03</span>最近 {CHECKIN.weeks} 周</h2>
+          <h2 id="checkin-heatmap"><span class="section-number" aria-hidden="true">03</span>最近一年</h2>
           <span class="checkin-total">有记录 {summary.recorded} 天 · 全打满 {summary.full} 天</span>
         </div>
         <div
           class="heatmap"
+          data-grid-width={String(gridWidth)}
+          data-max-scroll={String(maxScroll)}
           role="img"
-          aria-label={`最近 ${CHECKIN.weeks} 周的打卡日历：有记录 ${summary.recorded} 天，其中 ${summary.full} 天全部完成`}
+          aria-label={`最近一年的打卡日历：有记录 ${summary.recorded} 天，其中 ${summary.full} 天全部完成`}
         >
           <div class="heatmap-months" aria-hidden="true">
-            {monthLabels.map((month) => <span style={`grid-column: span ${month.span}`}>{month.label}</span>)}
+            {monthLabels.map((month, index) => (
+              <span style={`grid-column: span ${month.span}${index === 0 ? '; margin-left: -4px' : ''}`}>{month.label}</span>
+            ))}
           </div>
           <div class="heatmap-grid" aria-hidden="true">
             {cells.map((cell) => (
@@ -137,4 +144,26 @@ const note = (body = '') => body.replace(/\s+/g, ' ').trim().slice(0, 80);
       </section>
     </>
   )}
+  <script>
+    // 一年的热力图比正文宽：手机上默认停在最右边（最近的日子），拖到两头时月份标签跟着贴边。
+    document.querySelectorAll<HTMLElement>('.heatmap').forEach((box) => {
+      const toEnd = () => { box.scrollLeft = Number(box.dataset.maxScroll); };
+      const alignLabels = () => {
+        const months = box.querySelector<HTMLElement>('.heatmap-months');
+        if (!months) return;
+        months.style.transform = '';
+        const shift = Math.min(0, box.getBoundingClientRect().left + 4);
+        if (shift < 0) months.style.transform = `translateX(${shift}px)`;
+      };
+      const sync = () => requestAnimationFrame(alignLabels);
+      box.addEventListener('scroll', sync, { passive: true });
+      addEventListener('resize', sync);
+      const init = () => {
+        if (box.scrollWidth > box.clientWidth) toEnd();
+        alignLabels();
+      };
+      if (document.fonts?.ready) document.fonts.ready.then(init);
+      else init();
+    });
+  </script>
 </Base>

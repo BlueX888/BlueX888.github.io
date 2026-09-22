@@ -32,8 +32,9 @@ export interface HeatCell {
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-/** 月份标签「2026年9月」大约占三格宽，不到三周的月份就不标了 */
-const MIN_LABEL_WEEKS = 3;
+/* 月份标签「2026年9月」在等宽字体下大约 52px，而一格连间隙只有 17px，
+   所以不到四格的月份就不写字——否则会和下一个标签叠上。 */
+const MIN_LABEL_WEEKS = 4;
 
 /* 日期一律用「北京时间 YYYY-MM-DD」这个字符串当键。
    字符串能直接比较大小、能当 Map 的键，也不会像 Date 那样被机器时区影响。

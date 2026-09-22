@@ -16,7 +16,7 @@ const compiled = ts.transpileModule(source.replace('import.meta.env.DEV', 'false
   compilerOptions: { module: ts.ModuleKind.CommonJS },
 }).outputText;
 const lib = {};
-const checkin = { habits: [], weeks: 16, recentCount: 14, windowDays: 30 };
+const checkin = { habits: [], weeks: 53, recentCount: 14, windowDays: 30 };
 runInNewContext(compiled, {
   exports: lib,
   require: (id) => {
@@ -69,15 +69,15 @@ test('an account with no records yet still renders a complete page', () => {
     [{ name: '早起', done: false }, { name: '运动', done: false }],
   );
 
-  const { cells, monthLabels } = lib.heatmap(map, { weeks: 16, end: '2026-09-22' });
-  assert.equal(cells.length, 112);
+  const { cells, monthLabels } = lib.heatmap(map, { weeks: 53, end: '2026-09-22' });
+  assert.equal(cells.length, 371, '53 周 × 7 天 = 一整年');
   assert.equal(cells.every((c) => c.level === 0), true);
   // 最后一列的周一 … 周日对齐到 end 那一周，周二（end）之后都是空格子
   assert.equal(cells.at(-1).key, '2026-09-27', '最后一格是本周周日');
   assert.equal(cells.filter((c) => c.future).length, 5, '周三到周日还没有发生');
   assert.equal(cells.at(-1).future, true);
   assert.equal(cells.find((c) => c.key === '2026-09-22').future, false);
-  assert.equal(monthLabels.reduce((n, m) => n + m.span, 0), 16, '月份标签横向铺满整个网格');
+  assert.equal(monthLabels.reduce((n, m) => n + m.span, 0), 53, '月份标签横向铺满整个网格');
 });
 
 test('streaks count back from today, forgive an unfinished today, and break on a gap', () => {

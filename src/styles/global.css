@@ -211,6 +211,8 @@ h3 { font-size: 1.125rem; margin: 2rem 0 .75rem; }
 .heatmap-months { display: grid; grid-auto-flow: column; grid-auto-columns: 14px; gap: 3px; margin-bottom: .35rem; font-family: var(--mono); font-size: .75rem; color: var(--muted); white-space: nowrap; }
 .heatmap-grid { display: grid; grid-template-rows: repeat(7, 14px); grid-auto-flow: column; grid-auto-columns: 14px; gap: 3px; }
 .heat-cell { width: 14px; height: 14px; border-radius: 2px; background: var(--line); }
+/* display: grid 的单元格默认会被内容撑开，画布更宽时格子就会变形——压掉 14px 的地板 */
+.heatmap-months > span, .heatmap-grid > span { min-width: 0; min-height: 0; }
 .heat-cell[data-level='0'] { background: transparent; box-shadow: inset 0 0 0 1px var(--line); }
 .heat-cell[data-level='1'] { background: color-mix(in srgb, var(--accent) 25%, transparent); }
 .heat-cell[data-level='2'] { background: color-mix(in srgb, var(--accent) 50%, transparent); }
@@ -311,6 +313,9 @@ h3 { font-size: 1.125rem; margin: 2rem 0 .75rem; }
 }
 @media (max-width: 640px) {
   .wrap { padding-left: 1.25rem; padding-right: 1.25rem; }
+  /* 一年 53 周的网格在手机上塞不下，靠 .heatmap 横向滑动；滑到两头时月份标签跟着贴边 */
+  .heatmap { -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .heatmap::-webkit-scrollbar { display: none; }
   .site-header { margin-bottom: 2.25rem; }
   .site-header .wrap { display: grid; grid-template-columns: 1fr auto; gap: .2rem .5rem; padding-top: .8rem; padding-bottom: .5rem; }
   .site-header .wrap::after, .site-footer .wrap::before { left: 1.25rem; right: 1.25rem; }
